@@ -1,0 +1,13 @@
+{
+  "manifest_version": "0.2.0",
+  "root": "",
+  "platform": "gitee",
+  "knowledge_source": "owner/gridman-knowledge",
+  "modes_source": "owner/gridman-modes",
+  "token": "",
+  "modules_enabled": ["accounting", "audit", "tax", "investment", "compliance", "analysis", "specialized", "academic"],
+  "mind_dir": "mind",
+  "evidence_dir": "evidence",
+  "modes_dir": "modes",
+  "_comment": "安装时由 npx @gridman/skill init 生成。root 填用户指定的绝对路径，token 填 Git 平台 Access Token。modes_dir 下的 sys-*.md 和 index.json 在安装时从远程 modes_source 拉取到本地。"
+}
