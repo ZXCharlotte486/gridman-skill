@@ -5,116 +5,131 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gridman Console</title>
 <style>
-/* ========== 设计令牌（0.1.0 完整移植） ========== */
-:root{--n-0:#fff;--n-1:#fafafa;--n-2:#f4f4f5;--n-3:#e9e9ec;--n-4:#d6d6da;--n-5:#a5a5ad;--n-6:#74747d;--n-7:#55555e;--n-8:#3d3d45;--n-9:#1a1a1e;--bg-page:var(--n-1);--bg-surface:var(--n-0);--bg-subtle:var(--n-2);--bg-inset:var(--n-2);--border:var(--n-3);--border-strong:var(--n-4);--text:var(--n-9);--text-body:var(--n-8);--text-secondary:var(--n-6);--text-muted:var(--n-5);--accent:var(--n-9);--accent-hover:var(--n-8);--accent-on:var(--n-0);--focus-ring:rgba(26,26,30,.22);--slab-bg:#eeeef1;--slab-fg:var(--n-8);--slab-border:var(--n-4);--pass-fg:#15703c;--pass-bg:#eef9f2;--pass-border:#bfe3cd;--exception-fg:#96580a;--exception-bg:#fdf6e9;--exception-border:#e8d3a6;--fail-fg:#a92a22;--fail-bg:#fdf1f0;--fail-border:#ecc4c0;--pending-fg:var(--n-7);--pending-bg:var(--n-2);--pending-border:var(--n-5);--font-sans:"Segoe UI Variable Text","Segoe UI","Microsoft YaHei UI",system-ui,sans-serif;--font-mono:"Cascadia Mono",Consolas,"Sarasa Mono SC",monospace;--fs-micro:11px;--fs-tiny:12px;--fs-small:13px;--fs-body:14px;--fs-lead:16px;--fs-h3:18px;--fs-h2:21px;--fs-h1:28px;--fs-metric:30px;--sp-05:2px;--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;--sp-8:32px;--r-sm:6px;--r-md:10px;--r-lg:14px;--r-pill:999px;--rail:2px;--rail-accent:3px;--shadow-sm:0 1px 2px rgba(20,20,24,.05);--shadow-md:0 2px 8px rgba(20,20,24,.07);--dur-press:140ms;--dur-switch:180ms;--dur-page:200ms;--ease-out:cubic-bezier(.23,1,.32,1);font-family:var(--font-sans);font-size:var(--fs-body);color:var(--text-body)}
-:root[data-theme='dark']{--n-0:#1b1b1f;--n-1:#121215;--n-2:#242429;--n-3:#303036;--n-4:#3e3e46;--n-5:#6e6e78;--n-6:#9a9aa4;--n-7:#bdbdc5;--n-8:#dededf;--n-9:#f7f7f8;--bg-page:var(--n-1);--bg-surface:var(--n-0);--bg-subtle:var(--n-2);--bg-inset:var(--n-2);--border:var(--n-3);--border-strong:var(--n-4);--accent:var(--n-9);--accent-hover:var(--n-8);--accent-on:var(--n-1);--focus-ring:rgba(247,247,248,.28);--slab-bg:#26262c;--slab-fg:var(--n-8);--slab-border:#3a3a42;--pass-fg:#5fd08b;--pass-bg:#12251a;--pass-border:#245c39;--exception-fg:#e5b155;--exception-bg:#271e0d;--exception-border:#5f4718;--fail-fg:#f08a83;--fail-bg:#2a1615;--fail-border:#6b2a26;--pending-fg:var(--n-7);--pending-bg:var(--n-2);--pending-border:var(--n-5);--shadow-sm:0 1px 2px rgba(0,0,0,.4);--shadow-md:0 2px 10px rgba(0,0,0,.5)}
+/* ===== 设计令牌 ===== */
+:root{--n-0:#fff;--n-1:#fafafa;--n-2:#f4f4f5;--n-3:#e9e9ec;--n-4:#d6d6da;--n-5:#a5a5ad;--n-6:#74747d;--n-7:#55555e;--n-8:#3d3d45;--n-9:#1a1a1e;--bg-page:var(--n-1);--bg-surface:var(--n-0);--bg-subtle:var(--n-2);--border:var(--n-3);--border-strong:var(--n-4);--text:var(--n-9);--text-body:var(--n-8);--text-secondary:var(--n-6);--text-muted:var(--n-5);--accent:var(--n-9);--accent-hover:var(--n-8);--accent-on:var(--n-0);--slab-bg:#eeeef1;--slab-fg:var(--n-8);--slab-border:var(--n-4);--pass-fg:#15703c;--pass-bg:#eef9f2;--pass-border:#bfe3cd;--exception-fg:#96580a;--exception-bg:#fdf6e9;--exception-border:#e8d3a6;--fail-fg:#a92a22;--fail-bg:#fdf1f0;--fail-border:#ecc4c0;--pending-fg:var(--n-7);--pending-bg:var(--n-2);--pending-border:var(--n-5);--font-sans:"Segoe UI Variable Text","Segoe UI","Microsoft YaHei UI",system-ui,sans-serif;--font-mono:"Cascadia Mono",Consolas,"Sarasa Mono SC",monospace;--fs-micro:11px;--fs-tiny:12px;--fs-small:13px;--fs-body:14px;--fs-lead:16px;--fs-h3:18px;--fs-h2:21px;--fs-h1:28px;--fs-metric:30px;--sp-05:2px;--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;--sp-8:32px;--r-sm:6px;--r-md:10px;--r-lg:14px;--r-pill:999px;--rail:2px;--shadow-sm:0 1px 2px rgba(20,20,24,.05);--shadow-md:0 2px 8px rgba(20,20,24,.07);--dur-press:140ms;--dur-switch:180ms;--ease-out:cubic-bezier(.23,1,.32,1);font-family:var(--font-sans);font-size:var(--fs-body);color:var(--text-body)}
+:root[data-theme='dark']{--n-0:#1b1b1f;--n-1:#121215;--n-2:#242429;--n-3:#303036;--n-4:#3e3e46;--n-5:#6e6e78;--n-6:#9a9aa4;--n-7:#bdbdc5;--n-8:#dededf;--n-9:#f7f7f8;--bg-page:var(--n-1);--bg-surface:var(--n-0);--bg-subtle:var(--n-2);--border:var(--n-3);--border-strong:var(--n-4);--accent:var(--n-9);--accent-hover:var(--n-8);--accent-on:var(--n-1);--slab-bg:#26262c;--slab-fg:var(--n-8);--slab-border:#3a3a42;--pass-fg:#5fd08b;--pass-bg:#12251a;--pass-border:#245c39;--exception-fg:#e5b155;--exception-bg:#271e0d;--exception-border:#5f4718;--fail-fg:#f08a83;--fail-bg:#2a1615;--fail-border:#6b2a26;--pending-fg:var(--n-7);--pending-bg:var(--n-2);--pending-border:var(--n-5);--shadow-sm:0 1px 2px rgba(0,0,0,.4);--shadow-md:0 2px 10px rgba(0,0,0,.5)}
+*{box-sizing:border-box;margin:0;padding:0}html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-page)}button,input{font:inherit}code,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
 
-/* ========== 基础 ========== */
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-page)}
-button,input{font:inherit}
-code,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
-.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
-
-/* ========== 布局 ========== */
+/* ===== 布局 ===== */
 .app{height:100vh;display:grid;grid-template-columns:200px minmax(0,1fr)}
 main{height:100vh;overflow-y:auto;padding:var(--sp-6) var(--sp-8);display:flex;flex-direction:column}
-.page-header{flex:0 0 auto;padding-bottom:var(--sp-5)}
-.page-header small{display:block;color:var(--text-muted);font-size:var(--fs-micro);font-weight:700;letter-spacing:.09em;text-transform:uppercase}
-.page-header h1{font-size:var(--fs-h1);font-weight:700;color:var(--text);letter-spacing:-.015em;margin:var(--sp-1) 0 0}
-.page-header .lead{color:var(--text-secondary);font-size:var(--fs-small);margin-top:var(--sp-1)}
-.page-content{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-5)}
+.page-head{flex:0 0 auto;padding-bottom:var(--sp-5);border-bottom:1px solid var(--border);margin-bottom:var(--sp-5)}
+.page-head small{display:block;color:var(--text-muted);font-size:var(--fs-micro);font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.page-head h1{font-size:var(--fs-h1);font-weight:700;color:var(--text);letter-spacing:-.015em;margin:var(--sp-1) 0 0}
+.page-head p{color:var(--text-secondary);font-size:var(--fs-small);margin-top:var(--sp-1)}
+.scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-5)}
 
-/* ========== 侧栏 ========== */
+/* ===== 侧栏 ===== */
 aside{padding:var(--sp-6) var(--sp-3);border-right:1px solid var(--border);background:var(--bg-surface);display:flex;flex-direction:column}
 .brand{display:flex;gap:var(--sp-3);align-items:center;padding:0 var(--sp-2) var(--sp-6)}
 .brand b{display:grid;place-items:center;width:40px;height:40px;border-radius:var(--r-md);background:var(--accent);color:var(--accent-on);font-size:var(--fs-h3);font-weight:700}
 .brand strong{display:block;color:var(--text);font-size:var(--fs-lead)}
 .brand small{display:block;margin-top:var(--sp-05);color:var(--text-muted);font-size:var(--fs-tiny)}
-nav{display:grid;gap:var(--sp-05);flex:1}
+nav{display:grid;gap:var(--sp-05);flex:1;align-content:start}
 nav button{display:flex;align-items:center;border:0;border-radius:var(--r-md);padding:var(--sp-3);background:transparent;color:var(--text-secondary);font-size:var(--fs-body);font-weight:600;text-align:left;cursor:pointer;transition:background var(--dur-press) var(--ease-out)}
 nav button i{display:inline-block;width:28px;font-style:normal;font-size:var(--fs-lead)}
 nav button:hover{background:var(--bg-subtle);color:var(--text-body)}
 nav button.active{position:relative;background:var(--bg-subtle);color:var(--text);font-weight:700}
 nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bottom:var(--sp-2);width:var(--rail);border-radius:var(--r-pill);background:var(--accent)}
-.aside-info{margin-top:auto;padding:var(--sp-4) var(--sp-3);font-size:var(--fs-tiny);color:var(--text-muted);border-top:1px solid var(--border)}
-.aside-info .dot{display:inline-block;width:6px;height:6px;margin-right:var(--sp-2);border-radius:50%;background:var(--pass-fg)}
+.aside-foot{margin-top:auto;padding:var(--sp-4) var(--sp-3);border-top:1px solid var(--border);font-size:var(--fs-tiny);color:var(--text-muted);display:flex;flex-direction:column;gap:var(--sp-2)}
+.aside-foot .dot{display:inline-block;width:6px;height:6px;margin-right:var(--sp-2);border-radius:50%;background:var(--pass-fg)}
 
-/* ========== 卡片 ========== */
+/* ===== 卡片 ===== */
 .card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-5);box-shadow:var(--shadow-sm)}
-.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-4)}
-.card-head h2{font-size:var(--fs-lead);font-weight:700;color:var(--text)}
-.card-head .badge{font-size:var(--fs-tiny);color:var(--text-muted);background:var(--bg-subtle);padding:var(--sp-1) var(--sp-2);border-radius:var(--r-sm)}
+.card h2{font-size:var(--fs-lead);font-weight:700;color:var(--text);margin-bottom:var(--sp-4)}
+.card h3{font-size:var(--fs-body);font-weight:600;color:var(--text-body);margin-bottom:var(--sp-2)}
 
-/* ========== 指标 ========== */
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--sp-4)}
-.metric-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-5);text-align:center}
-.metric-card .num{font-size:var(--fs-metric);font-weight:700;color:var(--text);font-family:var(--font-mono)}
-.metric-card .label{font-size:var(--fs-tiny);color:var(--text-muted);text-transform:uppercase;letter-spacing:.09em;font-weight:700;margin-top:var(--sp-1)}
+/* ===== alert 面板（首页） ===== */
+.alert-slab{background:var(--slab-bg);border:1px solid var(--slab-border);border-radius:var(--r-lg);padding:var(--sp-5);display:flex;justify-content:space-between;align-items:center;gap:var(--sp-5)}
+.alert-slab .count{font-size:var(--fs-metric);font-weight:700;color:var(--text);font-family:var(--font-mono)}
+.alert-slab .desc{font-size:var(--fs-small);color:var(--slab-fg);margin-top:var(--sp-1)}
+.alert-slab.has-alert{border-color:var(--exception-border);background:var(--exception-bg)}
+.alert-slab.has-alert .count{color:var(--exception-fg)}
+.alert-slab button{border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-4);background:var(--bg-surface);color:var(--text-body);font-size:var(--fs-small);font-weight:600;cursor:pointer}
 
-/* ========== 模块标签 ========== */
-.module-grid{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
-.module-tag{display:inline-flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-3);border-radius:var(--r-md);font-size:var(--fs-small);font-weight:600;cursor:default;transition:all var(--dur-press) var(--ease-out)}
-.module-tag.on{background:var(--pass-bg);color:var(--pass-fg);border:1px solid var(--pass-border)}
-.module-tag.off{background:var(--bg-subtle);color:var(--text-muted);border:1px solid var(--border)}
-.module-tag .switch-dot{width:8px;height:8px;border-radius:50%}
-.module-tag.on .switch-dot{background:var(--pass-fg)}
-.module-tag.off .switch-dot{background:var(--text-muted)}
+/* ===== 指标网格 ===== */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--sp-4)}
+.m-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-5)}
+.m-card span{font-size:var(--fs-micro);color:var(--text-muted);text-transform:uppercase;letter-spacing:.09em;font-weight:700}
+.m-card b{display:block;font-size:var(--fs-h2);font-weight:700;color:var(--text);font-family:var(--font-mono);margin-top:var(--sp-1)}
+.m-card small{display:block;font-size:var(--fs-tiny);color:var(--text-muted);margin-top:var(--sp-1)}
 
-/* ========== 双栏 ========== */
-.two-col{display:grid;grid-template-columns:1fr 280px;gap:var(--sp-5);flex:1;min-height:0}
-.two-col .col-main{overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4)}
-.two-col .col-side{overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4)}
+/* ===== 双栏 ===== */
+.two-col{display:grid;grid-template-columns:1fr 260px;gap:var(--sp-5);flex:1;min-height:0}
+.two-col .main{overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4)}
+.two-col .side{overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4)}
+.side-box{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-4)}
+.side-box .big{font-size:var(--fs-h2);font-weight:700;color:var(--text);font-family:var(--font-mono)}
+.side-box .lbl{font-size:var(--fs-tiny);color:var(--text-muted);margin-top:var(--sp-05)}
+.bar{height:4px;background:var(--bg-subtle);border-radius:var(--r-pill);margin-top:var(--sp-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:var(--r-pill);transition:width .3s var(--ease-out)}
 
-/* ========== 侧栏统计 ========== */
-.side-stat{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-4)}
-.side-stat .big{font-size:var(--fs-h2);font-weight:700;color:var(--text);font-family:var(--font-mono)}
-.side-stat .desc{font-size:var(--fs-tiny);color:var(--text-muted);margin-top:var(--sp-1)}
-.progress-bar{height:4px;background:var(--bg-subtle);border-radius:var(--r-pill);margin-top:var(--sp-2);overflow:hidden}
-.progress-bar i{display:block;height:100%;background:var(--accent);border-radius:var(--r-pill);transition:width var(--dur-switch) var(--ease-out)}
+/* ===== 模块行 ===== */
+.mod-list{display:flex;flex-direction:column}
+.mod-row{display:flex;justify-content:space-between;align-items:center;padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--border);transition:background var(--dur-press) var(--ease-out)}
+.mod-row:last-child{border-bottom:none}
+.mod-row:hover{background:var(--bg-subtle)}
+.mod-row .info b{display:block;color:var(--text-body);font-size:var(--fs-small);font-weight:600}
+.mod-row .info small{color:var(--text-muted);font-size:var(--fs-tiny)}
+.mod-row.off .info b{color:var(--text-muted)}
+/* 开关 */
+.sw{position:relative;width:36px;height:20px;border:0;border-radius:var(--r-pill);background:var(--n-4);cursor:pointer;transition:background var(--dur-switch) var(--ease-out);flex-shrink:0}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--bg-surface);box-shadow:var(--shadow-sm);transition:transform var(--dur-switch) var(--ease-out)}
+.sw.on{background:var(--accent)}
+.sw.on::after{transform:translateX(16px)}
 
-/* ========== 列表 ========== */
-.record-list{display:flex;flex-direction:column}
-.record-row{padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--border);font-size:var(--fs-small);display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background var(--dur-press) var(--ease-out)}
-.record-row:hover{background:var(--bg-subtle)}
-.record-row:last-child{border-bottom:none}
-.record-row .name{color:var(--text-body);font-weight:600}
-.record-row .meta{color:var(--text-muted);font-size:var(--fs-tiny)}
-.record-row .hash{font-family:var(--font-mono);font-size:var(--fs-micro);color:var(--text-muted)}
+/* ===== 标签条 ===== */
+.tabs{display:flex;gap:var(--sp-05);margin-bottom:var(--sp-4)}
+.tabs button{border:0;border-radius:var(--r-md);padding:var(--sp-2) var(--sp-3);background:transparent;color:var(--text-secondary);font-size:var(--fs-small);font-weight:600;cursor:pointer}
+.tabs button.active{background:var(--bg-subtle);color:var(--text)}
 
-/* ========== 状态徽章 ========== */
-.badge-pass{background:var(--pass-bg);color:var(--pass-fg);border:1px solid var(--pass-border);padding:var(--sp-1) var(--sp-2);border-radius:var(--r-sm);font-size:var(--fs-micro);font-weight:700}
-.badge-fail{background:var(--fail-bg);color:var(--fail-fg);border:1px solid var(--fail-border);padding:var(--sp-1) var(--sp-2);border-radius:var(--r-sm);font-size:var(--fs-micro);font-weight:700}
-.badge-pending{background:var(--pending-bg);color:var(--pending-fg);border:1px dashed var(--pending-border);padding:var(--sp-1) var(--sp-2);border-radius:var(--r-sm);font-size:var(--fs-micro);font-weight:700}
+/* ===== 记录列表 ===== */
+.rec{padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--border);font-size:var(--fs-small);display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background var(--dur-press) var(--ease-out)}
+.rec:hover{background:var(--bg-subtle)}
+.rec:last-child{border-bottom:none}
+.rec b{color:var(--text-body);font-weight:600}
+.rec .meta{color:var(--text-muted);font-size:var(--fs-tiny)}
+.rec code{font-size:var(--fs-micro);color:var(--text-muted)}
 
-/* ========== 设置项 ========== */
-.setting-row{display:flex;justify-content:space-between;align-items:center;padding:var(--sp-3) 0;border-bottom:1px solid var(--border)}
-.setting-row:last-child{border-bottom:none}
-.setting-row .key{color:var(--text-secondary);font-size:var(--fs-small)}
-.setting-row .val{color:var(--text-body);font-family:var(--font-mono);font-size:var(--fs-small)}
+/* ===== 设置行 ===== */
+.set-row{display:flex;justify-content:space-between;align-items:center;padding:var(--sp-3) 0;border-bottom:1px solid var(--border)}
+.set-row:last-child{border-bottom:none}
+.set-row .k{color:var(--text-secondary);font-size:var(--fs-small)}
+.set-row .v{color:var(--text-body);font-family:var(--font-mono);font-size:var(--fs-small)}
 
-/* ========== 空状态 ========== */
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--sp-8);color:var(--text-muted);text-align:center;gap:var(--sp-3)}
-.empty-state .icon{font-size:var(--fs-h1);opacity:.4}
-.empty-state h2{font-size:var(--fs-lead);color:var(--text-secondary);font-weight:600}
-.empty-state p{font-size:var(--fs-small);max-width:320px}
+/* ===== 空 ===== */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--sp-8);color:var(--text-muted);text-align:center;gap:var(--sp-3)}
+.empty .ic{font-size:var(--fs-h1);opacity:.4}
+.empty h2{font-size:var(--fs-lead);color:var(--text-secondary);font-weight:600}
+.empty p{font-size:var(--fs-small);max-width:300px}
 
-/* ========== 信息条 ========== */
-.info-strip{background:var(--slab-bg);border:1px solid var(--slab-border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-4);font-size:var(--fs-tiny);color:var(--slab-fg);display:flex;align-items:center;gap:var(--sp-3)}
-.info-strip .btn{border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-1) var(--sp-3);background:var(--bg-surface);color:var(--text-body);font-size:var(--fs-tiny);font-weight:600;cursor:pointer}
+/* ===== 通知条 ===== */
+.strip{background:var(--slab-bg);border:1px solid var(--slab-border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-4);font-size:var(--fs-tiny);color:var(--slab-fg);display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-4)}
+.strip .btn{border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-1) var(--sp-3);background:var(--bg-surface);color:var(--text-body);font-size:var(--fs-tiny);font-weight:600;cursor:pointer}
 
-/* ========== 页面隐藏 ========== */
+/* ===== 注释卡 ===== */
+.note{background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-4);font-size:var(--fs-small);color:var(--text-secondary);line-height:1.6}
+.note strong{display:block;color:var(--text-body);margin-bottom:var(--sp-1)}
+.note p{margin-top:var(--sp-2)}
+
+/* ===== 徽章 ===== */
+.badge{font-size:var(--fs-micro);font-weight:700;padding:var(--sp-1) var(--sp-2);border-radius:var(--r-sm)}
+.badge-ok{background:var(--pass-bg);color:var(--pass-fg);border:1px solid var(--pass-border)}
+.badge-warn{background:var(--exception-bg);color:var(--exception-fg);border:1px solid var(--exception-border)}
+.badge-muted{background:var(--bg-subtle);color:var(--text-muted);border:1px solid var(--border)}
+
+/* ===== 页面切换 ===== */
 .page{display:none;flex:1;flex-direction:column}
 .page.active{display:flex}
 
-/* ========== 响应式 ========== */
+/* ===== 响应式 ===== */
 @media(max-width:720px){.app{grid-template-columns:1fr}aside{display:none}main{padding:var(--sp-4)}.two-col{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="app">
 <aside>
-  <div class="brand"><b>G</b><div><strong>Gridman</strong><small>Console</small></div></div>
+  <div class="brand"><b>G</b><div><strong>Gridman</strong><small>Console 0.2.0</small></div></div>
   <nav id="nav">
     <button data-page="home" class="active"><i>⌂</i>首页</button>
     <button data-page="knowledge"><i>▣</i>知识空间</button>
@@ -122,268 +137,219 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
     <button data-page="evidence"><i>✓</i>Evidence</button>
     <button data-page="settings"><i>⚙</i>设置</button>
   </nav>
-  <div class="aside-info">
-    <p style="margin-bottom:var(--sp-2)"><strong>知识由版本发布</strong></p>
-    <p>界面不提供导入入口。知识更新需发布新版本。</p>
+  <div class="aside-foot">
+    <div><strong style="font-size:var(--fs-small)">知识由版本发布</strong></div>
+    <div style="font-size:var(--fs-micro)">界面不提供导入入口。更新知识需发布新版本。</div>
+    <div style="margin-top:var(--sp-3)"><span class="dot"></span>Console 不上传业务文件</div>
   </div>
-  <div class="aside-info"><span class="dot"></span>Console 不上传业务文件</div>
 </aside>
 
 <main>
-  <div id="mode-bar" class="info-strip" style="margin-bottom:var(--sp-4)"></div>
+<div id="mode-bar" class="strip"></div>
 
-  <!-- ====== 首页 ====== -->
-  <div class="page active" id="page-home">
-    <div class="page-header">
-      <small>GRIDMAN CONSOLE</small>
-      <h1>首页</h1>
-      <p class="lead">有没有出事、下一步做什么。</p>
+<!-- ===== 首页 ===== -->
+<div class="page active" id="page-home">
+  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>首页</h1><p>有没有出事、下一步做什么，以及接入与使用文档。</p></div>
+  <div class="scroll">
+    <div class="alert-slab" id="home-alert">
+      <div><div class="count" id="alert-num">—</div><div class="desc" id="alert-desc">加载数据后显示状态。</div></div>
+      <button onclick="navTo('knowledge')">查看知识空间</button>
     </div>
-    <div class="page-content">
-      <div class="metrics">
-        <div class="metric-card"><div class="num" id="s-docs">—</div><div class="label">知识文件</div></div>
-        <div class="metric-card"><div class="num" id="s-mods">—</div><div class="label">启用模块</div></div>
-        <div class="metric-card"><div class="num" id="s-mind">—</div><div class="label">Mind 记录</div></div>
-        <div class="metric-card"><div class="num" id="s-evi">—</div><div class="label">Evidence</div></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><h2>系统状态</h2><span class="badge" id="sys-status">—</span></div>
-        <div id="home-status"><p style="color:var(--text-muted);font-size:var(--fs-small)">加载数据后显示状态概览。</p></div>
-      </div>
+    <div class="metrics" id="home-metrics">
+      <div class="m-card"><span>01</span><b id="h-docs">—</b><small>可检索知识文件</small></div>
+      <div class="m-card"><span>02</span><b id="h-mods">—</b><small>启用模块</small></div>
+      <div class="m-card"><span>03</span><b id="h-mind">—</b><small>Mind 记录</small></div>
+      <div class="m-card"><span>04</span><b id="h-evi">—</b><small>Evidence</small></div>
+    </div>
+    <div class="note">
+      <strong>这个界面用来确认资产与状态，不是发起任务的地方</strong>
+      <p>任务在宿主（Kiro / DSH / Cursor）里发起。Console 展示本地资产和知识状态。</p>
     </div>
   </div>
+</div>
 
-  <!-- ====== 知识空间 ====== -->
-  <div class="page" id="page-knowledge">
-    <div class="page-header">
-      <small>GRIDMAN CONSOLE</small>
-      <h1>知识空间</h1>
-      <p class="lead">启停模块。被关闭的模块不参与检索，古立特读不到。</p>
-    </div>
-    <div class="page-content">
-      <div class="two-col">
-        <div class="col-main">
-          <div class="card">
-            <div class="card-head"><h2>模块开关</h2><span class="badge" id="mod-count">—</span></div>
-            <div class="module-grid" id="modules-grid"></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><h2>知识文件列表</h2></div>
-            <div class="record-list" id="knowledge-files" style="max-height:400px;overflow-y:auto"></div>
-          </div>
+<!-- ===== 知识空间 ===== -->
+<div class="page" id="page-knowledge">
+  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>知识空间</h1><p>启停模块。被关闭的模块不参与检索，古立特读不到。</p></div>
+  <div class="scroll">
+    <div class="two-col">
+      <div class="main">
+        <div class="card">
+          <h2>模块</h2>
+          <div class="mod-list" id="mod-list"></div>
         </div>
-        <div class="col-side">
-          <div class="side-stat">
-            <div class="big" id="side-docs">—</div>
-            <div class="desc">可检索文件</div>
-          </div>
-          <div class="side-stat">
-            <div class="big" id="side-modules">—</div>
-            <div class="desc">已启用模块</div>
-            <div class="progress-bar"><i id="mod-progress" style="width:0%"></i></div>
-          </div>
-          <div class="side-stat">
-            <div class="big" id="side-version">—</div>
-            <div class="desc">知识版本</div>
-          </div>
+        <div class="card">
+          <h2>知识文件</h2>
+          <div id="file-list" style="max-height:360px;overflow-y:auto"></div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="side-box"><div class="big" id="k-docs">—</div><div class="lbl">可检索文件</div></div>
+        <div class="side-box"><div class="big" id="k-mods">—</div><div class="lbl">启用 / 总模块</div><div class="bar"><i id="k-bar" style="width:0%"></i></div></div>
+        <div class="side-box"><div class="big" id="k-ver">0.2.0</div><div class="lbl">知识版本</div></div>
+        <div class="note">
+          <strong>模块开关是硬边界</strong>
+          <p>关闭后该模块知识不参与检索。宿主不能自行打开——Skill 铁律保证。</p>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ====== Mind ====== -->
-  <div class="page" id="page-mind">
-    <div class="page-header">
-      <small>GRIDMAN CONSOLE</small>
-      <h1>Mind</h1>
-      <p class="lead">跨宿主的专业资产与偏好。属于你，不属于 Skill。卸载适配包不会删除。</p>
-    </div>
-    <div class="page-content">
-      <div class="card">
-        <div class="card-head"><h2>专业资产</h2><span class="badge" id="mind-count">—</span></div>
-        <div id="mind-body">
-          <div class="empty-state"><span class="icon">◇</span><h2>暂无 Mind 记录</h2><p>在 Agent 中确认专业判断后，会存入 Mind。换宿主也不会丢。</p></div>
-        </div>
+<!-- ===== Mind ===== -->
+<div class="page" id="page-mind">
+  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>Mind</h1><p>跨宿主的专业资产与偏好。属于你，不属于 Skill。卸载适配包不会删除。</p></div>
+  <div class="scroll">
+    <div class="card">
+      <h2>专业资产</h2>
+      <div class="tabs" id="mind-tabs">
+        <button class="active" data-cls="all">全部</button>
+        <button data-cls="preferences">偏好</button>
+        <button data-cls="judgment">判断</button>
+        <button data-cls="evidence">证据索引</button>
       </div>
+      <div id="mind-body">
+        <div class="empty"><span class="ic">◇</span><h2>暂无 Mind 记录</h2><p>在 Agent 中确认专业判断后，会存入 Mind。换宿主也不会丢。</p></div>
+      </div>
+    </div>
+    <div class="note">
+      <strong>写入只有一条通道</strong>
+      <p>宿主不能直接改写正式资产。它只能把变化提交到候选区，由你看过差异和影响范围后接受或拒绝。</p>
+    </div>
+    <div class="note">
+      <strong>来源必须分得清</strong>
+      <p>企业事实、你的陈述、模型判断和确定性运行结果分别标记，不混成无来源事实。</p>
     </div>
   </div>
+</div>
 
-  <!-- ====== Evidence ====== -->
-  <div class="page" id="page-evidence">
-    <div class="page-header">
-      <small>GRIDMAN CONSOLE</small>
-      <h1>Evidence</h1>
-      <p class="lead">单次运行的输入身份、参数、验收与哈希。证据验证只复算文件，不重新执行任务。</p>
-    </div>
-    <div class="page-content">
-      <div class="card">
-        <div class="card-head"><h2>运行记录</h2><span class="badge" id="evi-count">—</span></div>
-        <div id="evidence-body">
-          <div class="empty-state"><span class="icon">✓</span><h2>暂无 Evidence</h2><p>通过 Agent 执行确定性任务后，会在此留下可复核证据。</p></div>
-        </div>
+<!-- ===== Evidence ===== -->
+<div class="page" id="page-evidence">
+  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>Evidence</h1><p>单次运行的输入身份、参数、验收与哈希。证据验证只复算文件，不重新执行任务。</p></div>
+  <div class="scroll">
+    <div class="card">
+      <h2>运行记录</h2>
+      <div id="evi-body">
+        <div class="empty"><span class="ic">✓</span><h2>暂无 Evidence</h2><p>通过 Agent 执行确定性任务后，会在此留下可复核证据。</p></div>
       </div>
+    </div>
+    <div class="note">
+      <strong>SHA-256 证明文件未被修改，不证明结论正确</strong>
+      <p>哈希覆盖的是计算过程的可复核性。业务结论是否正确，仍需有权人员判断。</p>
     </div>
   </div>
+</div>
 
-  <!-- ====== 设置 ====== -->
-  <div class="page" id="page-settings">
-    <div class="page-header">
-      <small>GRIDMAN CONSOLE</small>
-      <h1>设置</h1>
-      <p class="lead">数据位置、接入方式、外观与边界声明。</p>
+<!-- ===== 设置 ===== -->
+<div class="page" id="page-settings">
+  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>设置</h1><p>数据位置、接入方式、外观与边界声明。</p></div>
+  <div class="scroll">
+    <div class="tabs" id="set-tabs">
+      <button class="active" data-tab="data">数据</button>
+      <button data-tab="appearance">外观</button>
+      <button data-tab="about">关于</button>
     </div>
-    <div class="page-content">
+
+    <div id="set-data" class="set-panel">
+      <div class="card"><h2>框架配置</h2><div id="cfg-list"></div></div>
+    </div>
+
+    <div id="set-appearance" class="set-panel" style="display:none">
       <div class="card">
-        <div class="card-head"><h2>框架配置</h2></div>
-        <div id="settings-list"></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><h2>外观</h2></div>
-        <div class="setting-row">
-          <span class="key">主题</span>
-          <div style="display:flex;gap:var(--sp-2)">
-            <button class="info-strip btn" onclick="setTheme('light')">浅色</button>
-            <button class="info-strip btn" onclick="setTheme('dark')">深色</button>
-            <button class="info-strip btn" onclick="setTheme('system')">跟随系统</button>
-          </div>
+        <h2>主题</h2>
+        <p style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-4)">默认跟随系统。手动选过就记住。浅色与深色是两套独立取值，不是互相反转亮度。</p>
+        <div style="display:flex;gap:var(--sp-2)">
+          <button class="strip btn" onclick="setTheme('light')">浅色</button>
+          <button class="strip btn" onclick="setTheme('dark')">深色</button>
+          <button class="strip btn" onclick="setTheme('system')">跟随系统</button>
         </div>
       </div>
+    </div>
+
+    <div id="set-about" class="set-panel" style="display:none">
       <div class="card">
-        <div class="card-head"><h2>边界声明</h2></div>
-        <div style="font-size:var(--fs-small);color:var(--text-secondary);line-height:1.6">
-          <p>• Console 与 Rescue Pack 不主动上传业务文件。</p>
-          <p>• 宿主是否上传取决于宿主与模型部署方式。</p>
-          <p>• SHA-256 证明文件未被修改，不单独证明业务结论正确。</p>
-          <p>• 知识以官方最新发布为准，本系统内容可能滞后。</p>
-        </div>
+        <h2>Gridman Console 0.2.0</h2>
+        <p style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-4)">本地运行的管理面板。它是可替换的——删除 Console 不会删除你的 Mind 和 Evidence。</p>
       </div>
+      <div class="note"><strong>专业边界</strong><p>本工具提供专业知识指引与工作辅助，不构成正式审计意见、税务建议或法律意见。税率、文号、优惠期限以官方最新发布为准。</p></div>
+      <div class="note"><strong>Evidence 的诚实边界</strong><p>哈希证明文件身份和未被修改，不能证明业务结论正确。对外使用「可复核证据包」，不使用「绝对正确」「不可否认」。</p></div>
     </div>
   </div>
+</div>
+
 </main>
 </div>
 
 <script>
-/* ========== 导航 ========== */
-document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('page-'+btn.dataset.page).classList.add('active');
-  });
+/* ===== 导航 ===== */
+function navTo(p){document.querySelectorAll('nav button').forEach(b=>{b.classList.toggle('active',b.dataset.page===p)});document.querySelectorAll('.page').forEach(pg=>pg.classList.toggle('active',pg.id==='page-'+p))}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>navTo(b.dataset.page)));
+
+/* ===== 设置标签 ===== */
+document.getElementById('set-tabs').addEventListener('click',e=>{
+  const btn=e.target.closest('button');if(!btn)return;
+  document.querySelectorAll('#set-tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.set-panel').forEach(p=>p.style.display='none');
+  document.getElementById('set-'+btn.dataset.tab).style.display='block';
 });
 
-/* ========== 主题 ========== */
-function setTheme(t){
-  if(t==='system'){
-    localStorage.removeItem('gridman.theme');
-    t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
-  }else{localStorage.setItem('gridman.theme',t)}
-  document.documentElement.setAttribute('data-theme',t);
-}
+/* ===== Mind标签 ===== */
+document.getElementById('mind-tabs').addEventListener('click',e=>{
+  const btn=e.target.closest('button');if(!btn)return;
+  document.querySelectorAll('#mind-tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+});
+
+/* ===== 主题 ===== */
+function setTheme(t){if(t==='system'){localStorage.removeItem('gridman.theme');t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}else{localStorage.setItem('gridman.theme',t)}document.documentElement.setAttribute('data-theme',t)}
 (function(){const s=localStorage.getItem('gridman.theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
 
-/* ========== 双模式数据加载 ========== */
-const isLocalhost=location.hostname==='localhost'||location.hostname==='127.0.0.1';
-let dirHandle=null;
-
+/* ===== 数据加载 ===== */
+const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+let dh=null;
 async function init(){
   const bar=document.getElementById('mode-bar');
-  if(isLocalhost){
-    bar.textContent='模式 A — 通过 localhost 读取本地数据';
-    await loadLocalhost();
-  }else{
-    bar.innerHTML='模式 B — <button class="btn" id="pick-dir">选择 .gridman 数据目录</button>';
-    document.getElementById('pick-dir').onclick=pickDir;
-  }
+  if(isLocal){bar.textContent='模式 A — localhost';await loadA()}
+  else{bar.innerHTML='模式 B — <button class="btn" onclick="pickDir()">选择数据目录</button>'}
 }
-
-async function loadLocalhost(){
-  try{
-    const m=await(await fetch('/manifest.json')).json();
-    renderAll(m);
-    await loadDir('/'+(m.mind_dir||'mind')+'/','mind-body','mind-count','◇','Mind');
-    await loadDir('/'+(m.evidence_dir||'evidence')+'/','evidence-body','evi-count','✓','Evidence');
-  }catch(e){document.getElementById('mode-bar').textContent='模式 A 失败: '+e.message}
-}
-
 async function pickDir(){
   if(!('showDirectoryPicker' in window)){document.getElementById('mode-bar').textContent='需要 Chrome/Edge';return}
-  try{
-    dirHandle=await window.showDirectoryPicker();
-    document.getElementById('mode-bar').textContent='模式 B — '+dirHandle.name;
-    const mf=await(await dirHandle.getFileHandle('manifest.json')).getFile();
-    const m=JSON.parse(await mf.text());
-    renderAll(m);
-    await loadSubDir(m.mind_dir||'mind','mind-body','mind-count','◇','Mind');
-    await loadSubDir(m.evidence_dir||'evidence','evidence-body','evi-count','✓','Evidence');
-  }catch(e){document.getElementById('mode-bar').textContent='授权失败: '+e.message}
+  try{dh=await window.showDirectoryPicker();document.getElementById('mode-bar').textContent='模式 B — '+dh.name;await loadB()}catch(e){document.getElementById('mode-bar').textContent='取消: '+e.message}
 }
+async function loadA(){
+  try{const m=await(await fetch('/manifest.json')).json();render(m);await countDir('/'+(m.mind_dir||'mind')+'/','h-mind');await countDir('/'+(m.evidence_dir||'evidence')+'/','h-evi')}catch(e){document.getElementById('mode-bar').textContent='失败: '+e.message}
+}
+async function loadB(){
+  try{const f=await(await dh.getFileHandle('manifest.json')).getFile();const m=JSON.parse(await f.text());render(m);await countSub(m.mind_dir||'mind','h-mind');await countSub(m.evidence_dir||'evidence','h-evi')}catch(e){}
+}
+async function countDir(path,id){try{const r=await fetch(path);if(!r.ok)return;const h=await r.text();const n=[...new DOMParser().parseFromString(h,'text/html').querySelectorAll('a')].filter(a=>(a.getAttribute('href')||'').endsWith('.json')).length;document.getElementById(id).textContent=n}catch(e){}}
+async function countSub(name,id){try{const sub=await dh.getDirectoryHandle(name);let n=0;for await(const[nm] of sub){if(nm.endsWith('.json'))n++}document.getElementById(id).textContent=n}catch(e){}}
 
-/* ========== 渲染 ========== */
-function renderAll(m){
+function render(m){
   const enabled=m.modules_enabled||[];
-  const allMods=['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
-  // 首页指标
-  document.getElementById('s-mods').textContent=enabled.length;
-  document.getElementById('s-docs').textContent='77';
-  document.getElementById('sys-status').textContent='就绪';
-  document.getElementById('sys-status').className='badge-pass';
-  document.getElementById('home-status').innerHTML='<p style="color:var(--text-body);font-size:var(--fs-small)">知识源: <code class="mono">'+( m.knowledge_source||'—')+'</code><br>平台: '+(m.platform||'—')+'<br>Token: '+(m.token?'已配置':'未设置')+'</p>';
+  const all=['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
+  // 首页
+  document.getElementById('h-docs').textContent='77';
+  document.getElementById('h-mods').textContent=enabled.length+' / '+all.length;
+  document.getElementById('alert-num').textContent=enabled.length;
+  document.getElementById('alert-desc').textContent='个模块已启用。知识源: '+(m.knowledge_source||'—');
   // 知识空间
-  document.getElementById('mod-count').textContent=enabled.length+'/'+allMods.length;
-  document.getElementById('modules-grid').innerHTML=allMods.map(mod=>{
+  document.getElementById('k-docs').textContent='77';
+  document.getElementById('k-mods').textContent=enabled.length+' / '+all.length;
+  document.getElementById('k-ver').textContent=m.manifest_version||'0.2.0';
+  document.getElementById('k-bar').style.width=Math.round(enabled.length/all.length*100)+'%';
+  // 模块列表
+  document.getElementById('mod-list').innerHTML=all.map(mod=>{
     const on=enabled.includes(mod);
-    return '<span class="module-tag '+(on?'on':'off')+'"><span class="switch-dot"></span>'+mod+'</span>';
+    return '<div class="mod-row'+(on?'':' off')+'"><div class="info"><b>'+mod+'</b><small>'+(on?'已启用':'已关闭')+'</small></div><button class="sw'+(on?' on':'')+'" aria-label="'+mod+'开关"></button></div>';
   }).join('');
-  document.getElementById('side-docs').textContent='77';
-  document.getElementById('side-modules').textContent=enabled.length+' / '+allMods.length;
-  document.getElementById('side-version').textContent=m.manifest_version||'0.2.0';
-  document.getElementById('mod-progress').style.width=Math.round(enabled.length/allMods.length*100)+'%';
+  // 文件列表（简化展示模块名）
+  document.getElementById('file-list').innerHTML=all.filter(mod=>enabled.includes(mod)).map(mod=>'<div class="rec"><b>'+mod+'/</b><span class="meta">已启用</span></div>').join('');
   // 设置
-  document.getElementById('settings-list').innerHTML=[
+  document.getElementById('cfg-list').innerHTML=[
     ['根目录',m.root||'—'],['知识源',m.knowledge_source||'—'],['模式源',m.modes_source||'—'],
-    ['平台',m.platform||'—'],['Token',m.token?'••••••••':'未设置'],
-    ['Mind 目录',m.mind_dir||'mind'],['Evidence 目录',m.evidence_dir||'evidence']
-  ].map(([k,v])=>'<div class="setting-row"><span class="key">'+k+'</span><span class="val">'+v+'</span></div>').join('');
+    ['平台',m.platform||'—'],['Token',m.token?'••••••••':'未设置'],['版本',m.manifest_version||'0.2.0']
+  ].map(([k,v])=>'<div class="set-row"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>').join('');
 }
-
-/* ========== 目录读取（模式 A） ========== */
-async function loadDir(path,bodyId,countId,icon,label){
-  try{
-    const res=await fetch(path);
-    if(!res.ok){setEmpty(bodyId,icon,label);return}
-    const html=await res.text();
-    const doc=new DOMParser().parseFromString(html,'text/html');
-    const files=[...doc.querySelectorAll('a')].map(a=>a.getAttribute('href')).filter(h=>h&&h.endsWith('.json')&&!h.startsWith('/'));
-    if(!files.length){setEmpty(bodyId,icon,label);return}
-    document.getElementById(countId).textContent=files.length;
-    document.getElementById('s-'+countId.split('-')[0]).textContent=files.length;
-    let rows='';
-    for(const f of files.slice(0,50)){
-      rows+='<div class="record-row"><span class="name">'+f+'</span></div>';
-    }
-    document.getElementById(bodyId).innerHTML='<div class="record-list">'+rows+'</div>';
-  }catch(e){setEmpty(bodyId,icon,label)}
-}
-
-/* ========== 目录读取（模式 B） ========== */
-async function loadSubDir(name,bodyId,countId,icon,label){
-  try{
-    const sub=await dirHandle.getDirectoryHandle(name);
-    const files=[];
-    for await(const[n,h] of sub){if(h.kind==='file'&&n.endsWith('.json'))files.push(n)}
-    if(!files.length){setEmpty(bodyId,icon,label);return}
-    document.getElementById(countId).textContent=files.length;
-    document.getElementById('s-'+countId.split('-')[0]).textContent=files.length;
-    document.getElementById(bodyId).innerHTML='<div class="record-list">'+files.map(f=>'<div class="record-row"><span class="name">'+f+'</span></div>').join('')+'</div>';
-  }catch(e){setEmpty(bodyId,icon,label)}
-}
-
-function setEmpty(id,icon,label){
-  document.getElementById(id).innerHTML='<div class="empty-state"><span class="icon">'+icon+'</span><h2>暂无 '+label+'</h2></div>';
-}
-
 init();
 </script>
 </body>
