@@ -338,13 +338,13 @@ async function pickDir(){
   try{dh=await window.showDirectoryPicker();document.getElementById('mode-bar').textContent='模式 B — '+dh.name;await loadB()}catch(e){document.getElementById('mode-bar').textContent='取消: '+e.message}
 }
 async function loadA(){
-  try{const m=await(await fetch('/manifest.json')).json();render(m);await countDir('/'+(m.mind_dir||'mind')+'/','h-mind');await countDir('/'+(m.evidence_dir||'evidence')+'/','h-evi')}catch(e){document.getElementById('mode-bar').textContent='失败: '+e.message}
+  try{const m=await(await fetch('/manifest.json')).json();render(m);await postInit()}catch(e){document.getElementById('mode-bar').textContent='失败: '+e.message}
 }
 async function loadB(){
-  try{const f=await(await dh.getFileHandle('manifest.json')).getFile();const m=JSON.parse(await f.text());render(m);await countSub(m.mind_dir||'mind','h-mind');await countSub(m.evidence_dir||'evidence','h-evi')}catch(e){}
+  try{const f=await(await dh.getFileHandle('manifest.json')).getFile();const m=JSON.parse(await f.text());render(m);await postInit()}catch(e){}
 }
-async function countDir(path,id){try{const r=await fetch(path);if(!r.ok)return;const h=await r.text();const n=[...new DOMParser().parseFromString(h,'text/html').querySelectorAll('a')].filter(a=>(a.getAttribute('href')||'').endsWith('.json')).length;document.getElementById(id).textContent=n}catch(e){}}
-async function countSub(name,id){try{const sub=await dh.getDirectoryHandle(name);let n=0;for await(const[nm] of sub){if(nm.endsWith('.json'))n++}document.getElementById(id).textContent=n}catch(e){}}
+init();
+postInit();
 
 function render(m){
   const enabled=m.modules_enabled||[];
@@ -362,10 +362,10 @@ function render(m){
   document.getElementById('k-mods').textContent=enabled.length+' / '+all.length;
   document.getElementById('k-ver').textContent=m.manifest_version||'0.2.0';
   document.getElementById('k-bar').style.width=Math.round(enabled.length/all.length*100)+'%';
-  // 模块列表
+  // 模块列表（带真实开关）
   document.getElementById('mod-list').innerHTML=all.map(mod=>{
     const on=enabled.includes(mod);
-    return '<div class="mod-row'+(on?'':' off')+'"><div class="info"><b>'+mod+'</b><small>'+(on?'已启用':'已关闭')+'</small></div><button class="sw'+(on?' on':'')+'" aria-label="'+mod+'开关"></button></div>';
+    return '<div class="mod-row'+(on?'':' off')+'"><div class="info"><b>'+mod+'</b><small>'+(on?'已启用':'已关闭')+'</small></div><button class="sw'+(on?' on':'')+'" data-mod="'+mod+'" aria-label="'+mod+'开关" onclick="toggleModule(\''+mod+'\')"></button></div>';
   }).join('');
   // 文件列表（简化展示模块名）
   document.getElementById('file-list').innerHTML=all.filter(mod=>enabled.includes(mod)).map(mod=>'<div class="rec"><b>'+mod+'/</b><span class="meta">已启用</span></div>').join('');
@@ -376,6 +376,143 @@ function render(m){
   ].map(([k,v])=>'<div class="set-row"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>').join('');
 }
 init();
+
+/* ===== 模块开关（真实写入） ===== */
+async function toggleModule(mod){
+  const m=window._manifest;
+  if(!m)return;
+  let enabled=m.modules_enabled||[];
+  if(enabled.includes(mod)){enabled=enabled.filter(x=>x!==mod)}else{enabled.push(mod)}
+  m.modules_enabled=enabled;
+  window._enabledModules=enabled;
+
+  // 模式 B: 有 dirHandle 可以直接写
+  if(dh){
+    try{
+      const handle=await dh.getFileHandle('manifest.json');
+      const writable=await handle.createWritable();
+      await writable.write(JSON.stringify(m,null,2));
+      await writable.close();
+      render(m);
+    }catch(e){alert('写入失败: '+e.message)}
+    return;
+  }
+  // 模式 A: localhost 只读，提示用户
+  if(isLocal){
+    render(m);// 先更新 UI
+    document.getElementById('mode-bar').innerHTML='<span style="color:var(--exception-fg)">⚠ 模块已在界面切换，但 localhost 模式无法写入 manifest.json。请让 Agent 执行: 修改 manifest.json 的 modules_enabled</span>';
+    return;
+  }
+}
+
+/* ===== 轻量 doctor 自检 ===== */
+async function runDoctor(){
+  const checks=[];
+  const m=window._manifest;
+  // 检查 manifest
+  if(m){checks.push({name:'manifest.json',pass:true,detail:'已加载'})}
+  else{checks.push({name:'manifest.json',pass:false,detail:'未找到'})}
+  // 检查 Token
+  if(m&&m.token){checks.push({name:'Token',pass:true,detail:'已配置'})}
+  else{checks.push({name:'Token',pass:false,detail:'未设置，无法访问远程知识'})}
+  // 检查模块
+  const enabled=(m&&m.modules_enabled)||[];
+  checks.push({name:'启用模块',pass:enabled.length>0,detail:enabled.length+' 个'});
+  // 检查模式文件（模式 B 下可检查）
+  if(dh){
+    try{
+      const modesDir=await dh.getDirectoryHandle(m.modes_dir||'modes');
+      let count=0;for await(const[n] of modesDir){if(n.endsWith('.md'))count++}
+      checks.push({name:'本地模式文件',pass:count>0,detail:count+' 个'});
+    }catch(e){checks.push({name:'本地模式文件',pass:false,detail:'modes/ 目录不存在'})}
+  }
+  return checks;
+}
+
+// 首页加载完后跑 doctor
+async function refreshDoctor(){
+  const checks=await runDoctor();
+  const failed=checks.filter(c=>!c.pass);
+  const el=document.getElementById('home-alert');
+  if(failed.length===0){
+    document.getElementById('alert-num').textContent='✓';
+    document.getElementById('alert-desc').textContent='自检通过。'+checks.length+' 项全部正常。';
+    el.classList.remove('has-alert');
+  }else{
+    document.getElementById('alert-num').textContent=failed.length;
+    document.getElementById('alert-desc').textContent='项需要注意: '+failed.map(c=>c.name+' — '+c.detail).join('; ');
+    el.classList.add('has-alert');
+  }
+}
+
+/* ===== Evidence 展示 ===== */
+async function loadEvidence(){
+  const body=document.getElementById('evi-body');
+  let files=[];
+  if(isLocal){
+    try{
+      const m=window._manifest;
+      const r=await fetch('/'+(m?.evidence_dir||'evidence')+'/');
+      if(r.ok){
+        const html=await r.text();
+        files=[...new DOMParser().parseFromString(html,'text/html').querySelectorAll('a')]
+          .map(a=>a.getAttribute('href')).filter(h=>h&&h.endsWith('.json')&&!h.startsWith('/'));
+      }
+    }catch(e){}
+  }else if(dh){
+    try{
+      const m=window._manifest;
+      const sub=await dh.getDirectoryHandle(m?.evidence_dir||'evidence');
+      for await(const[n] of sub){if(n.endsWith('.json'))files.push(n)}
+    }catch(e){}
+  }
+  document.getElementById('h-evi').textContent=files.length;
+  if(files.length===0){
+    body.innerHTML='<div class="empty"><span class="ic">✓</span><h2>暂无 Evidence</h2><p>通过 Agent 执行确定性任务后，会在此留下可复核证据。</p></div>';
+    return;
+  }
+  body.innerHTML='<div style="max-height:400px;overflow-y:auto">'+files.map(f=>
+    '<div class="rec"><b>'+f+'</b><code style="font-size:var(--fs-micro)">SHA-256 记录</code></div>'
+  ).join('')+'</div>';
+}
+
+/* ===== Mind 展示 ===== */
+async function loadMind(){
+  const body=document.getElementById('mind-body');
+  let files=[];
+  if(isLocal){
+    try{
+      const m=window._manifest;
+      const r=await fetch('/'+(m?.mind_dir||'mind')+'/');
+      if(r.ok){
+        const html=await r.text();
+        files=[...new DOMParser().parseFromString(html,'text/html').querySelectorAll('a')]
+          .map(a=>a.getAttribute('href')).filter(h=>h&&h.endsWith('.json')&&!h.startsWith('/'));
+      }
+    }catch(e){}
+  }else if(dh){
+    try{
+      const m=window._manifest;
+      const sub=await dh.getDirectoryHandle(m?.mind_dir||'mind');
+      for await(const[n] of sub){if(n.endsWith('.json'))files.push(n)}
+    }catch(e){}
+  }
+  document.getElementById('h-mind').textContent=files.length;
+  if(files.length===0){
+    body.innerHTML='<div class="empty"><span class="ic">◇</span><h2>暂无 Mind 记录</h2><p>在 Agent 中确认专业判断后，会存入 Mind。换宿主也不会丢。</p></div>';
+    return;
+  }
+  body.innerHTML='<div style="max-height:400px;overflow-y:auto">'+files.map(f=>
+    '<div class="rec"><b>'+f.replace('.json','')+'</b><span class="meta">专业资产</span></div>'
+  ).join('')+'</div>';
+}
+
+// 初始化后加载额外数据
+async function postInit(){
+  await loadMind();
+  await loadEvidence();
+  await refreshDoctor();
+}
 
 /* ===== 搜索 ===== */
 let _indexData=null;
