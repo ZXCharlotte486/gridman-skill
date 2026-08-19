@@ -362,13 +362,10 @@ function render(m){
   document.getElementById('k-mods').textContent=enabled.length+' / '+all.length;
   document.getElementById('k-ver').textContent=m.manifest_version||'0.2.0';
   document.getElementById('k-bar').style.width=Math.round(enabled.length/all.length*100)+'%';
-  // 模块列表（带真实开关）
-  document.getElementById('mod-list').innerHTML=all.map(mod=>{
-    const on=enabled.includes(mod);
-    return '<div class="mod-row'+(on?'':' off')+'"><div class="info"><b>'+mod+'</b><small>'+(on?'已启用':'已关闭')+'</small></div><button class="sw'+(on?' on':'')+'" data-mod="'+mod+'" aria-label="'+mod+'开关" onclick="toggleModule(\''+mod+'\')"></button></div>';
-  }).join('');
-  // 文件列表（简化展示模块名）
-  document.getElementById('file-list').innerHTML=all.filter(mod=>enabled.includes(mod)).map(mod=>'<div class="rec"><b>'+mod+'/</b><span class="meta">已启用</span></div>').join('');
+  // 模块列表（带真实开关 + 中文标题 + 文档数）
+  // 先尝试加载 index.json 获取模块详情
+  loadKnowledgeIndex(m);
+  
   // 设置
   document.getElementById('cfg-list').innerHTML=[
     ['根目录',m.root||'—'],['知识源',m.knowledge_source||'—'],['模式源',m.modes_source||'—'],
@@ -376,6 +373,63 @@ function render(m){
   ].map(([k,v])=>'<div class="set-row"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>').join('');
 }
 init();
+
+/* ===== 知识空间模块详情 ===== */
+async function loadKnowledgeIndex(m){
+  const enabled=m.modules_enabled||[];
+  const all=['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
+  
+  // 模块中文名映射
+  const titles={accounting:'会计与准则',audit:'审计与内控',tax:'税务',investment:'投行与估值',compliance:'合规与经济法',analysis:'财务与经营分析',specialized:'专项财务',academic:'学术与案例',sources:'官方来源入口'};
+  
+  let index=null;
+  
+  // 尝试拉远程 index.json
+  if(m.token && m.knowledge_source){
+    try{
+      const platform=m.platform||'github';
+      let url;
+      if(platform==='gitee'){url='https://gitee.com/api/v5/repos/'+m.knowledge_source+'/contents/index.json?access_token='+m.token}
+      else{url='https://api.github.com/repos/'+m.knowledge_source+'/contents/index.json'}
+      const headers=platform==='github'?{'Authorization':'Bearer '+m.token,'Accept':'application/vnd.github.v3+json'}:{};
+      const res=await fetch(url,{headers});
+      if(res.ok){
+        const json=await res.json();
+        const content=atob(json.content.replace(/\n/g,''));
+        index=JSON.parse(content);
+        _indexData=index;// 供搜索用
+      }
+    }catch(e){}
+  }
+  
+  // 渲染模块列表
+  const modList=document.getElementById('mod-list');
+  modList.innerHTML=all.map(mod=>{
+    const on=enabled.includes(mod);
+    const title=titles[mod]||mod;
+    let docCount=0;
+    if(index){docCount=index.documents.filter(d=>d.module_id===mod).length}
+    const desc=docCount>0?docCount+' 个文件':'—';
+    return '<div class="mod-row'+(on?'':' off')+'">'
+      +'<div class="info"><b>'+title+'</b><small>'+mod+' · '+desc+(on?' · 已启用':' · 已关闭')+'</small></div>'
+      +'<button class="sw'+(on?' on':'')+'" data-mod="'+mod+'" aria-label="'+mod+'开关" onclick="toggleModule(\''+mod+'\')"></button>'
+      +'</div>';
+  }).join('');
+  
+  // 渲染文件列表（真实文件名）
+  const fileList=document.getElementById('file-list');
+  if(index&&index.documents.length>0){
+    const enabledDocs=index.documents.filter(d=>enabled.includes(d.module_id));
+    document.getElementById('k-docs').textContent=enabledDocs.length;
+    document.getElementById('h-docs').textContent=enabledDocs.length;
+    document.getElementById('side-docs')&&(document.getElementById('side-docs').textContent=enabledDocs.length);
+    fileList.innerHTML=enabledDocs.map(d=>
+      '<div class="rec"><div><b>'+d.title+'</b><br><code style="font-size:var(--fs-micro);color:var(--text-muted)">'+d.path+'</code></div><span class="meta">'+d.module_id+'</span></div>'
+    ).join('');
+  }else{
+    fileList.innerHTML='<div class="empty"><span class="ic">▣</span><h2>无法加载知识索引</h2><p>检查 Token 和网络连接。</p></div>';
+  }
+}
 
 /* ===== 模块开关（真实写入） ===== */
 async function toggleModule(mod){
