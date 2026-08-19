@@ -133,6 +133,7 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
   <nav id="nav">
     <button data-page="home" class="active"><i>⌂</i>首页</button>
     <button data-page="knowledge"><i>▣</i>知识空间</button>
+    <button data-page="search"><i>⌕</i>知识检索</button>
     <button data-page="mind"><i>◇</i>Mind</button>
     <button data-page="evidence"><i>✓</i>Evidence</button>
     <button data-page="settings"><i>⚙</i>设置</button>
@@ -192,6 +193,27 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
           <p>关闭后该模块知识不参与检索。宿主不能自行打开——Skill 铁律保证。</p>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 知识检索 ===== -->
+<div class="page" id="page-search">
+  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>知识检索</h1><p>只检索已启用的模块。被关闭的模块不参与检索，古立特也读不到。</p></div>
+  <div class="scroll">
+    <div class="card">
+      <form id="search-form" style="display:flex;gap:var(--sp-3);margin-bottom:var(--sp-4)">
+        <input id="search-input" type="text" placeholder="用一句话提问，例如：应收账款账龄怎么分段" style="flex:1;padding:var(--sp-3) var(--sp-4);border:1px solid var(--border);border-radius:var(--r-md);background:var(--bg-subtle);color:var(--text-body);font-size:var(--fs-body);outline:none" />
+        <button type="submit" style="border:1px solid var(--accent);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-5);background:var(--accent);color:var(--accent-on);font-size:var(--fs-small);font-weight:600;cursor:pointer">检索</button>
+      </form>
+      <div id="search-scope" style="font-size:var(--fs-tiny);color:var(--text-muted);margin-bottom:var(--sp-4)"></div>
+      <div id="search-results">
+        <div class="empty"><span class="ic">⌕</span><h2>还没有检索</h2><p>输入关键词匹配 index.json 中的 keywords 和 alias。检索只覆盖已启用模块。</p></div>
+      </div>
+    </div>
+    <div class="note">
+      <strong>检索范围 = 已启用模块</strong>
+      <p>关闭的模块不参与检索。如果搜不到，确认相关模块是否被关闭（在知识空间页查看）。</p>
     </div>
   </div>
 </div>
@@ -327,6 +349,9 @@ async function countSub(name,id){try{const sub=await dh.getDirectoryHandle(name)
 function render(m){
   const enabled=m.modules_enabled||[];
   const all=['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
+  // 存全局变量供搜索用
+  window._manifest=m;
+  window._enabledModules=enabled;
   // 首页
   document.getElementById('h-docs').textContent='77';
   document.getElementById('h-mods').textContent=enabled.length+' / '+all.length;
@@ -351,6 +376,72 @@ function render(m){
   ].map(([k,v])=>'<div class="set-row"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>').join('');
 }
 init();
+
+/* ===== 搜索 ===== */
+let _indexData=null;
+async function loadIndex(){
+  if(_indexData)return _indexData;
+  // 尝试从 localhost 或远程读 index.json
+  try{
+    if(isLocal){const r=await fetch('/index.json');if(r.ok){_indexData=await r.json();return _indexData}}
+    // 如果本地没有，尝试从 knowledge 源读取（需要 manifest 里的信息）
+    // 简化：先假设 index.json 在同目录
+  }catch(e){}
+  // 降级：尝试 File System API
+  if(dh){try{const sub=await dh.getDirectoryHandle('knowledge');const f=await(await sub.getFileHandle('index.json')).getFile();_indexData=JSON.parse(await f.text());return _indexData}catch(e){}}
+  return null;
+}
+
+document.getElementById('search-form').addEventListener('submit',async function(e){
+  e.preventDefault();
+  const query=document.getElementById('search-input').value.trim();
+  if(!query)return;
+  const index=await loadIndex();
+  const results=document.getElementById('search-results');
+  const scope=document.getElementById('search-scope');
+  
+  if(!index||!index.documents){
+    results.innerHTML='<div class="empty"><span class="ic">—</span><h2>无法加载知识索引</h2><p>请确认 index.json 可访问。</p></div>';
+    return;
+  }
+  
+  const enabled=window._enabledModules||[];
+  const docs=index.documents.filter(d=>enabled.includes(d.module_id));
+  scope.textContent='检索范围: '+enabled.length+' 个模块, '+docs.length+' 个文档';
+  
+  // 关键词匹配
+  const scored=[];
+  for(const doc of docs){
+    let score=0;
+    const haystack=(doc.keywords||[]).join(' ')+' '+(doc.alias||[]).join(' ')+' '+(doc.title||'');
+    for(let len=Math.min(query.length,6);len>=2;len--){
+      for(let i=0;i<=query.length-len;i++){
+        const term=query.substring(i,i+len);
+        if(haystack.includes(term))score+=len;
+      }
+    }
+    if(score>0)scored.push({doc,score});
+  }
+  scored.sort((a,b)=>b.score-a.score);
+  
+  if(scored.length===0){
+    results.innerHTML='<div class="empty"><span class="ic">—</span><h2>没有命中</h2><p>换个说法试试，或确认相关模块没有被关闭。</p></div>';
+    return;
+  }
+  
+  results.innerHTML=scored.slice(0,10).map((item,i)=>{
+    const d=item.doc;
+    const matched=(d.keywords||[]).filter(k=>query.includes(k)||k.split('').some(c=>query.includes(c)));
+    return '<div class="rec" style="flex-direction:column;align-items:flex-start;gap:var(--sp-1)">'
+      +'<div style="display:flex;justify-content:space-between;width:100%"><b>'+d.title+'</b><span class="badge badge-muted">'+item.score+'</span></div>'
+      +'<div style="display:flex;gap:var(--sp-2);flex-wrap:wrap">'
+      +'<code style="font-size:var(--fs-micro)">'+d.path+'</code>'
+      +'<span class="meta">'+d.module_id+'</span>'
+      +'</div>'
+      +(matched.length?'<div style="display:flex;gap:var(--sp-1);flex-wrap:wrap;margin-top:var(--sp-1)">'+matched.slice(0,5).map(m=>'<span style="background:var(--exception-bg);color:var(--exception-fg);padding:1px 6px;border-radius:var(--r-sm);font-size:var(--fs-micro)">'+m+'</span>').join('')+'</div>':'')
+      +'</div>';
+  }).join('');
+});
 </script>
 </body>
 </html>
