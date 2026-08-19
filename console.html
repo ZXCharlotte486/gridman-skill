@@ -1,215 +1,383 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gridman Console</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e1e4e8; padding: 24px; }
-    h1 { font-size: 20px; margin-bottom: 8px; }
-    .subtitle { color: #8b949e; font-size: 13px; margin-bottom: 24px; }
-    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-    .card h2 { font-size: 14px; color: #58a6ff; margin-bottom: 12px; }
-    .item { padding: 8px 0; border-bottom: 1px solid #21262d; font-size: 13px; }
-    .item:last-child { border-bottom: none; }
-    .label { color: #8b949e; }
-    .value { color: #e1e4e8; }
-    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin: 2px; }
-    .tag-on { background: #1f6f2b; color: #7ee787; }
-    .tag-off { background: #6e2d2d; color: #f85149; }
-    .btn { background: #21262d; border: 1px solid #30363d; color: #e1e4e8; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-    .btn:hover { background: #30363d; }
-    .empty { color: #484f58; font-style: italic; padding: 12px 0; }
-    #mode-banner { background: #1c2128; border: 1px solid #30363d; border-radius: 6px; padding: 10px 16px; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+/* === 设计令牌（移植自 0.1.0 Console） === */
+:root {
+  --n-0: #ffffff; --n-1: #fafafa; --n-2: #f4f4f5; --n-3: #e9e9ec;
+  --n-4: #d6d6da; --n-5: #a5a5ad; --n-6: #74747d; --n-7: #55555e;
+  --n-8: #3d3d45; --n-9: #1a1a1e;
+  --bg-page: var(--n-1); --bg-surface: var(--n-0); --bg-subtle: var(--n-2); --bg-inset: var(--n-2);
+  --border: var(--n-3); --border-strong: var(--n-4);
+  --text: var(--n-9); --text-body: var(--n-8); --text-secondary: var(--n-6); --text-muted: var(--n-5);
+  --accent: var(--n-9); --accent-hover: var(--n-8); --accent-on: var(--n-0);
+  --pass-fg: #15703c; --pass-bg: #eef9f2; --pass-border: #bfe3cd;
+  --exception-fg: #96580a; --exception-bg: #fdf6e9; --exception-border: #e8d3a6;
+  --fail-fg: #a92a22; --fail-bg: #fdf1f0; --fail-border: #ecc4c0;
+  --pending-fg: var(--n-7); --pending-bg: var(--n-2); --pending-border: var(--n-5);
+  --font-sans: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", Consolas, "Sarasa Mono SC", monospace;
+  --fs-micro: 11px; --fs-tiny: 12px; --fs-small: 13px; --fs-body: 14px;
+  --fs-lead: 16px; --fs-h3: 18px; --fs-h2: 21px; --fs-h1: 28px; --fs-metric: 30px;
+  --sp-05: 2px; --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px;
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-pill: 999px;
+  --rail: 2px; --rail-accent: 3px;
+  --shadow-sm: 0 1px 2px rgba(20,20,24,.05); --shadow-md: 0 2px 8px rgba(20,20,24,.07);
+  --dur-press: 140ms; --dur-switch: 180ms; --dur-page: 200ms;
+  --ease-out: cubic-bezier(.23,1,.32,1);
+  font-family: var(--font-sans); font-size: var(--fs-body); color: var(--text-body);
+}
+:root[data-theme='dark'] {
+  --n-0: #1b1b1f; --n-1: #121215; --n-2: #242429; --n-3: #303036;
+  --n-4: #3e3e46; --n-5: #6e6e78; --n-6: #9a9aa4; --n-7: #bdbdc5;
+  --n-8: #dededf; --n-9: #f7f7f8;
+  --bg-page: var(--n-1); --bg-surface: var(--n-0); --bg-subtle: var(--n-2); --bg-inset: var(--n-2);
+  --border: var(--n-3); --border-strong: var(--n-4);
+  --accent: var(--n-9); --accent-hover: var(--n-8); --accent-on: var(--n-1);
+  --pass-fg: #5fd08b; --pass-bg: #12251a; --pass-border: #245c39;
+  --exception-fg: #e5b155; --exception-bg: #271e0d; --exception-border: #5f4718;
+  --fail-fg: #f08a83; --fail-bg: #2a1615; --fail-border: #6b2a26;
+  --pending-fg: var(--n-7); --pending-bg: var(--n-2); --pending-border: var(--n-5);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4); --shadow-md: 0 2px 10px rgba(0,0,0,.5);
+}
+
+/* === 基础重置 === */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg-page); }
+button, input { font: inherit; }
+code, .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* === 布局骨架 === */
+.app { height: 100vh; display: grid; grid-template-columns: 200px minmax(0,1fr); }
+main { height: 100vh; overflow-y: auto; padding: var(--sp-6) var(--sp-8); display: flex; flex-direction: column; gap: var(--sp-5); }
+header { flex: 0 0 auto; }
+header h1 { font-size: var(--fs-h1); font-weight: 700; color: var(--text); letter-spacing: -.015em; }
+header .lead { color: var(--text-secondary); font-size: var(--fs-small); margin-top: var(--sp-1); }
+
+/* === 侧栏 === */
+aside { padding: var(--sp-6) var(--sp-3); border-right: 1px solid var(--border); background: var(--bg-surface); display: flex; flex-direction: column; }
+.brand { display: flex; gap: var(--sp-3); align-items: center; padding: 0 var(--sp-2) var(--sp-6); }
+.brand b { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--r-md); background: var(--accent); color: var(--accent-on); font-size: var(--fs-h3); font-weight: 700; }
+.brand strong { display: block; color: var(--text); font-size: var(--fs-lead); }
+.brand small { display: block; margin-top: var(--sp-05); color: var(--text-muted); font-size: var(--fs-tiny); }
+nav { display: grid; gap: var(--sp-05); flex: 1; }
+nav button { display: flex; align-items: center; border: 0; border-radius: var(--r-md); padding: var(--sp-3); background: transparent; color: var(--text-secondary); font-size: var(--fs-body); font-weight: 600; text-align: left; cursor: pointer; transition: background var(--dur-press) var(--ease-out); }
+nav button i { display: inline-block; width: 28px; font-style: normal; font-size: var(--fs-lead); }
+nav button:hover { background: var(--bg-subtle); color: var(--text-body); }
+nav button.active { position: relative; background: var(--bg-subtle); color: var(--text); font-weight: 700; }
+nav button.active::before { content: ""; position: absolute; left: 0; top: var(--sp-2); bottom: var(--sp-2); width: var(--rail); border-radius: var(--r-pill); background: var(--accent); }
+.sidebar-footer { margin-top: auto; padding: var(--sp-3); color: var(--text-muted); font-size: var(--fs-tiny); }
+.sidebar-footer .dot { display: inline-block; width: 6px; height: 6px; margin-right: var(--sp-2); border-radius: 50%; background: var(--pass-fg); }
+
+/* === 卡片 === */
+.card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: var(--sp-5); box-shadow: var(--shadow-sm); }
+.card h2 { font-size: var(--fs-lead); font-weight: 700; color: var(--text); margin-bottom: var(--sp-3); }
+.card h3 { font-size: var(--fs-body); font-weight: 600; color: var(--text-body); margin-bottom: var(--sp-2); }
+
+/* === 模块标签 === */
+.tag { display: inline-block; padding: var(--sp-1) var(--sp-2); border-radius: var(--r-sm); font-size: var(--fs-tiny); font-weight: 600; margin: var(--sp-05); }
+.tag-on { background: var(--pass-bg); color: var(--pass-fg); border: 1px solid var(--pass-border); }
+.tag-off { background: var(--fail-bg); color: var(--fail-fg); border: 1px solid var(--fail-border); }
+
+/* === 列表项 === */
+.list-item { padding: var(--sp-3) 0; border-bottom: 1px solid var(--border); font-size: var(--fs-small); }
+.list-item:last-child { border-bottom: none; }
+.list-item .label { color: var(--text-muted); }
+.list-item .value { color: var(--text-body); }
+
+/* === 指标数字 === */
+.metric { font-size: var(--fs-metric); font-weight: 700; color: var(--text); font-family: var(--font-mono); }
+.metric-label { font-size: var(--fs-tiny); color: var(--text-muted); text-transform: uppercase; letter-spacing: .09em; font-weight: 700; }
+
+/* === 按钮 === */
+.btn { border: 1px solid var(--border); border-radius: var(--r-md); padding: var(--sp-2) var(--sp-4); background: var(--bg-surface); color: var(--text-body); font-size: var(--fs-small); font-weight: 600; cursor: pointer; transition: border-color var(--dur-press) var(--ease-out); }
+.btn:hover { border-color: var(--border-strong); }
+.btn-primary { border-color: var(--accent); background: var(--accent); color: var(--accent-on); }
+
+/* === 开关 === */
+.switch { position: relative; width: 36px; height: 20px; border: 0; border-radius: var(--r-pill); background: var(--n-4); cursor: pointer; transition: background var(--dur-switch) var(--ease-out); }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg-surface); transition: transform var(--dur-switch) var(--ease-out); }
+.switch.on { background: var(--accent); }
+.switch.on::after { transform: translateX(16px); }
+
+/* === 空状态 === */
+.empty { color: var(--text-muted); font-style: italic; padding: var(--sp-4) 0; font-size: var(--fs-small); }
+
+/* === 信息条 === */
+.info-bar { background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--r-md); padding: var(--sp-2) var(--sp-4); font-size: var(--fs-tiny); color: var(--text-secondary); margin-bottom: var(--sp-4); }
+
+/* === 隐藏页面 === */
+.page { display: none; flex: 1; overflow-y: auto; }
+.page.active { display: flex; flex-direction: column; gap: var(--sp-5); }
+
+/* === 主题切换 === */
+.theme-toggle { border: 0; background: transparent; color: var(--text-muted); cursor: pointer; font-size: var(--fs-lead); padding: var(--sp-2); border-radius: var(--r-md); }
+.theme-toggle:hover { background: var(--bg-subtle); color: var(--text-body); }
+
+/* === 响应式 === */
+@media (max-width: 640px) {
+  .app { grid-template-columns: 1fr; }
+  aside { display: none; }
+  main { padding: var(--sp-4); }
+}
   </style>
 </head>
 <body>
-  <h1>Gridman Console</h1>
-  <p class="subtitle">超级特工古立特 — 本地资产管理</p>
+<div class="app">
+  <!-- 侧栏 -->
+  <aside>
+    <div class="brand">
+      <b>G</b>
+      <div><strong>Gridman</strong><small>Console</small></div>
+    </div>
+    <nav id="nav">
+      <button data-page="home" class="active"><i>⌂</i>首页</button>
+      <button data-page="knowledge"><i>▣</i>知识空间</button>
+      <button data-page="mind"><i>◇</i>Mind</button>
+      <button data-page="evidence"><i>✓</i>Evidence</button>
+      <button data-page="settings"><i>⚙</i>设置</button>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="dot"></span>本地运行
+    </div>
+  </aside>
 
-  <div id="mode-banner"></div>
+  <!-- 主内容 -->
+  <main>
+    <div id="mode-bar" class="info-bar"></div>
 
-  <div class="card">
-    <h2>模块开关</h2>
-    <div id="modules-list"><p class="empty">加载中...</p></div>
-  </div>
+    <!-- 首页 -->
+    <div class="page active" id="page-home">
+      <header>
+        <h1>Gridman Console</h1>
+        <p class="lead">有没有出事、下一步做什么。</p>
+      </header>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:var(--sp-4);">
+        <div class="card"><div class="metric" id="stat-knowledge">—</div><div class="metric-label">知识文件</div></div>
+        <div class="card"><div class="metric" id="stat-modules">—</div><div class="metric-label">启用模块</div></div>
+        <div class="card"><div class="metric" id="stat-mind">—</div><div class="metric-label">Mind 记录</div></div>
+        <div class="card"><div class="metric" id="stat-evidence">—</div><div class="metric-label">Evidence</div></div>
+      </div>
+    </div>
 
-  <div class="card">
-    <h2>Mind（专业资产）</h2>
-    <div id="mind-list"><p class="empty">加载中...</p></div>
-  </div>
+    <!-- 知识空间 -->
+    <div class="page" id="page-knowledge">
+      <header>
+        <h1>知识空间</h1>
+        <p class="lead">启停模块。被关闭的模块不参与检索。</p>
+      </header>
+      <div class="card">
+        <h2>模块开关</h2>
+        <div id="modules-list"><p class="empty">加载中...</p></div>
+      </div>
+    </div>
 
-  <div class="card">
-    <h2>Evidence（运行证据）</h2>
-    <div id="evidence-list"><p class="empty">加载中...</p></div>
-  </div>
+    <!-- Mind -->
+    <div class="page" id="page-mind">
+      <header>
+        <h1>Mind</h1>
+        <p class="lead">跨宿主的专业资产。属于你，不属于 Skill。</p>
+      </header>
+      <div class="card">
+        <h2>专业资产</h2>
+        <div id="mind-list"><p class="empty">加载中...</p></div>
+      </div>
+    </div>
 
-  <div class="card">
-    <h2>设置</h2>
-    <div id="settings-view"><p class="empty">加载中...</p></div>
-  </div>
+    <!-- Evidence -->
+    <div class="page" id="page-evidence">
+      <header>
+        <h1>Evidence</h1>
+        <p class="lead">单次运行的输入身份、参数、验收与哈希。</p>
+      </header>
+      <div class="card">
+        <h2>运行记录</h2>
+        <div id="evidence-list"><p class="empty">加载中...</p></div>
+      </div>
+    </div>
 
-  <script>
-    // 双模式自动切换
-    const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    let dirHandle = null;
+    <!-- 设置 -->
+    <div class="page" id="page-settings">
+      <header>
+        <h1>设置</h1>
+        <p class="lead">数据位置、接入方式、外观。</p>
+      </header>
+      <div class="card">
+        <h2>配置</h2>
+        <div id="settings-view"><p class="empty">加载中...</p></div>
+      </div>
+      <div class="card">
+        <h2>外观</h2>
+        <div style="display:flex; align-items:center; gap:var(--sp-3);">
+          <span style="font-size:var(--fs-small); color:var(--text-secondary);">主题</span>
+          <button class="btn" id="theme-btn" onclick="toggleTheme()">切换深浅</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
 
-    async function init() {
-      const banner = document.getElementById('mode-banner');
-      if (isLocalhost) {
-        banner.textContent = '模式 A: 通过 localhost 服务读取本地数据';
-        await loadViaLocalhost();
-      } else {
-        banner.textContent = '模式 B: 请授权 .gridman 数据目录（仅支持 Chrome/Edge）';
-        await loadViaFileSystem();
-      }
-    }
+<script>
+// === 双模式检测 ===
+const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+let dirHandle = null;
 
-    // --- 模式 A: localhost fetch ---
-    async function loadViaLocalhost() {
+// === 导航 ===
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('page-' + btn.dataset.page).classList.add('active');
+  });
+});
+
+// === 主题切换 ===
+function toggleTheme() {
+  const root = document.documentElement;
+  const current = root.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('gridman.theme', next);
+}
+(function initTheme() {
+  const stored = localStorage.getItem('gridman.theme');
+  if (stored) document.documentElement.setAttribute('data-theme', stored);
+})();
+
+// === 数据加载 ===
+async function init() {
+  const bar = document.getElementById('mode-bar');
+  if (isLocalhost) {
+    bar.textContent = '模式 A：通过 localhost 读取本地数据';
+    await loadViaLocalhost();
+  } else {
+    bar.innerHTML = '模式 B：请授权数据目录 <button class="btn" id="auth-btn" style="margin-left:var(--sp-3)">选择目录</button>';
+    document.getElementById('auth-btn').onclick = loadViaFileSystem;
+  }
+}
+
+// --- 模式 A: localhost ---
+async function loadViaLocalhost() {
+  try {
+    const manifest = await (await fetch('/manifest.json')).json();
+    renderSettings(manifest);
+    renderModules(manifest.modules_enabled || []);
+    await loadDirHtml('/' + (manifest.mind_dir || 'mind') + '/', 'mind-list', renderMindItems);
+    await loadDirHtml('/' + (manifest.evidence_dir || 'evidence') + '/', 'evidence-list', renderEvidenceItems);
+    updateStats(manifest);
+  } catch (e) {
+    document.getElementById('mode-bar').textContent = '模式 A 失败: ' + e.message;
+  }
+}
+
+async function loadDirHtml(path, elementId, renderFn) {
+  try {
+    const res = await fetch(path);
+    if (!res.ok) { document.getElementById(elementId).innerHTML = '<p class="empty">目录为空</p>'; return; }
+    const html = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const links = Array.from(doc.querySelectorAll('a'));
+    const jsonFiles = links.map(a => a.getAttribute('href')).filter(h => h && h.endsWith('.json') && !h.startsWith('/'));
+    if (!jsonFiles.length) { document.getElementById(elementId).innerHTML = '<p class="empty">暂无记录</p>'; return; }
+    const files = [];
+    for (const filename of jsonFiles) {
       try {
-        const manifest = await (await fetch('/manifest.json')).json();
-        renderSettings(manifest);
-        renderModules(manifest.modules_enabled || []);
-        await loadDirHtml('/' + (manifest.mind_dir || 'mind') + '/', 'mind-list', renderMindItems);
-        await loadDirHtml('/' + (manifest.evidence_dir || 'evidence') + '/', 'evidence-list', renderEvidenceItems);
-      } catch (e) {
-        document.getElementById('mode-banner').textContent = '模式 A 失败: ' + e.message;
+        const r = await fetch(path + filename);
+        if (r.ok) files.push({ name: filename, content: await r.json() });
+      } catch(e) {}
+    }
+    renderFn(elementId, files);
+  } catch (e) {
+    document.getElementById(elementId).innerHTML = '<p class="empty">无法读取</p>';
+  }
+}
+
+// --- 模式 B: File System Access API ---
+async function loadViaFileSystem() {
+  if (!('showDirectoryPicker' in window)) {
+    document.getElementById('mode-bar').textContent = '当前浏览器不支持，请使用 Chrome 或 Edge';
+    return;
+  }
+  try {
+    dirHandle = await window.showDirectoryPicker();
+    document.getElementById('mode-bar').textContent = '模式 B：已授权 — ' + dirHandle.name;
+    await loadFromDirHandle();
+  } catch (e) {
+    document.getElementById('mode-bar').textContent = '授权取消: ' + e.message;
+  }
+}
+
+async function loadFromDirHandle() {
+  try {
+    const mf = await (await dirHandle.getFileHandle('manifest.json')).getFile();
+    const manifest = JSON.parse(await mf.text());
+    renderSettings(manifest);
+    renderModules(manifest.modules_enabled || []);
+    updateStats(manifest);
+  } catch(e) { document.getElementById('settings-view').innerHTML = '<p class="empty">manifest.json 未找到</p>'; }
+  await loadSubDir('mind', 'mind-list', renderMindItems);
+  await loadSubDir('evidence', 'evidence-list', renderEvidenceItems);
+}
+
+async function loadSubDir(dirName, elementId, renderFn) {
+  try {
+    const sub = await dirHandle.getDirectoryHandle(dirName);
+    const files = [];
+    for await (const [name, handle] of sub) {
+      if (handle.kind === 'file' && name.endsWith('.json')) {
+        const file = await handle.getFile();
+        files.push({ name, content: JSON.parse(await file.text()) });
       }
     }
+    renderFn(elementId, files);
+  } catch(e) { document.getElementById(elementId).innerHTML = '<p class="empty">目录为空</p>'; }
+}
 
-    // python -m http.server 返回 HTML 目录页，解析其中的 <a> 标签提取文件名
-    async function loadDirHtml(path, elementId, renderFn) {
-      try {
-        const res = await fetch(path);
-        if (!res.ok) { document.getElementById(elementId).innerHTML = '<p class="empty">目录为空</p>'; return; }
-        const html = await res.text();
-        // 解析 HTML 目录页中的文件链接
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const links = Array.from(doc.querySelectorAll('a'));
-        const jsonFiles = links
-          .map(a => a.getAttribute('href'))
-          .filter(href => href && href.endsWith('.json') && !href.startsWith('/'));
-        
-        if (jsonFiles.length === 0) {
-          document.getElementById(elementId).innerHTML = '<p class="empty">目录为空</p>';
-          return;
-        }
+// === 渲染函数 ===
+function renderSettings(m) {
+  document.getElementById('settings-view').innerHTML = `
+    <div class="list-item"><span class="label">根目录</span> <span class="value mono">${m.root||'—'}</span></div>
+    <div class="list-item"><span class="label">知识源</span> <span class="value mono">${m.knowledge_source||'—'}</span></div>
+    <div class="list-item"><span class="label">模式源</span> <span class="value mono">${m.modes_source||'—'}</span></div>
+    <div class="list-item"><span class="label">平台</span> <span class="value">${m.platform||'—'}</span></div>
+    <div class="list-item"><span class="label">Token</span> <span class="value">${m.token?'••••••••':'未设置'}</span></div>
+  `;
+}
 
-        // 逐个读取 JSON 文件
-        const files = [];
-        for (const filename of jsonFiles) {
-          try {
-            const fileRes = await fetch(path + filename);
-            if (fileRes.ok) {
-              const content = await fileRes.json();
-              files.push({ name: filename, content });
-            }
-          } catch (e) { /* 跳过读取失败的文件 */ }
-        }
-        renderFn(elementId, files);
-      } catch (e) {
-        document.getElementById(elementId).innerHTML = '<p class="empty">无法读取</p>';
-      }
-    }
+function renderModules(enabled) {
+  const all = ['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
+  document.getElementById('modules-list').innerHTML = all.map(m => {
+    const on = enabled.includes(m);
+    return `<span class="tag ${on?'tag-on':'tag-off'}">${m} ${on?'ON':'OFF'}</span>`;
+  }).join('');
+}
 
-    // --- 模式 B: File System Access API ---
-    async function loadViaFileSystem() {
-      if (!('showDirectoryPicker' in window)) {
-        document.getElementById('mode-banner').textContent = '当前浏览器不支持 File System Access API，请使用 Chrome 或 Edge';
-        return;
-      }
+function renderMindItems(id, files) {
+  const el = document.getElementById(id);
+  if (!files.length) { el.innerHTML = '<p class="empty">暂无 Mind 记录</p>'; return; }
+  el.innerHTML = files.map(f => `<div class="list-item"><span class="value">${f.name}</span></div>`).join('');
+}
 
-      const btn = document.createElement('button');
-      btn.className = 'btn';
-      btn.textContent = '选择 .gridman 数据目录';
-      btn.onclick = async () => {
-        try {
-          dirHandle = await window.showDirectoryPicker();
-          btn.remove();
-          document.getElementById('mode-banner').textContent = '模式 B: 已授权目录 — ' + dirHandle.name;
-          await loadFromDirHandle();
-        } catch (e) {
-          document.getElementById('mode-banner').textContent = '授权取消或失败: ' + e.message;
-        }
-      };
-      document.getElementById('mode-banner').appendChild(btn);
-    }
+function renderEvidenceItems(id, files) {
+  const el = document.getElementById(id);
+  if (!files.length) { el.innerHTML = '<p class="empty">暂无 Evidence</p>'; return; }
+  el.innerHTML = files.map(f => `<div class="list-item"><span class="value mono">${f.name}</span></div>`).join('');
+}
 
-    async function loadFromDirHandle() {
-      try {
-        const manifestFile = await (await dirHandle.getFileHandle('manifest.json')).getFile();
-        const manifest = JSON.parse(await manifestFile.text());
-        renderSettings(manifest);
-        renderModules(manifest.modules_enabled || []);
-      } catch (e) {
-        document.getElementById('settings-view').innerHTML = '<p class="empty">manifest.json 不存在</p>';
-      }
+function updateStats(manifest) {
+  const enabled = manifest.modules_enabled || [];
+  document.getElementById('stat-modules').textContent = enabled.length;
+  // 其他统计需要读取实际文件数，先显示模块数
+}
 
-      await loadDirHandle('mind', 'mind-list', renderMindItems);
-      await loadDirHandle('evidence', 'evidence-list', renderEvidenceItems);
-    }
-
-    async function loadDirHandle(dirName, elementId, renderFn) {
-      try {
-        const subDir = await dirHandle.getDirectoryHandle(dirName);
-        const files = [];
-        for await (const [name, handle] of subDir) {
-          if (handle.kind === 'file' && name.endsWith('.json')) {
-            const file = await handle.getFile();
-            const content = JSON.parse(await file.text());
-            files.push({ name, content });
-          }
-        }
-        renderFn(elementId, files);
-      } catch (e) {
-        document.getElementById(elementId).innerHTML = '<p class="empty">目录为空或不存在</p>';
-      }
-    }
-
-    // --- 渲染函数 ---
-    function renderSettings(manifest) {
-      const el = document.getElementById('settings-view');
-      el.innerHTML = `
-        <div class="item"><span class="label">根目录:</span> <span class="value">${manifest.root || '—'}</span></div>
-        <div class="item"><span class="label">知识源:</span> <span class="value">${manifest.knowledge_source || '—'}</span></div>
-        <div class="item"><span class="label">模式源:</span> <span class="value">${manifest.modes_source || '—'}</span></div>
-        <div class="item"><span class="label">平台:</span> <span class="value">${manifest.platform || '—'}</span></div>
-        <div class="item"><span class="label">Token:</span> <span class="value">${manifest.token ? '********' : '未设置'}</span></div>
-      `;
-    }
-
-    function renderModules(modules) {
-      const el = document.getElementById('modules-list');
-      const allModules = ['accounting', 'audit', 'tax', 'investment', 'compliance', 'analysis', 'specialized', 'academic', 'extra', 'workflows'];
-      el.innerHTML = allModules.map(m => {
-        const on = modules.includes(m);
-        return `<span class="tag ${on ? 'tag-on' : 'tag-off'}">${m} ${on ? 'ON' : 'OFF'}</span>`;
-      }).join('');
-    }
-
-    function renderMindItems(elementId, files) {
-      const el = document.getElementById(elementId);
-      if (!files || files.length === 0) { el.innerHTML = '<p class="empty">暂无 Mind 记录</p>'; return; }
-      el.innerHTML = files.map(f => {
-        const name = f.name || f;
-        return `<div class="item"><span class="value">${name}</span></div>`;
-      }).join('');
-    }
-
-    function renderEvidenceItems(elementId, files) {
-      const el = document.getElementById(elementId);
-      if (!files || files.length === 0) { el.innerHTML = '<p class="empty">暂无 Evidence 记录</p>'; return; }
-      el.innerHTML = files.map(f => {
-        const name = f.name || f;
-        return `<div class="item"><span class="value">${name}</span></div>`;
-      }).join('');
-    }
-
-    // 启动
-    init();
-  </script>
+// 启动
+init();
+</script>
 </body>
 </html>
