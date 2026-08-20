@@ -64,9 +64,9 @@ main{height:100vh;overflow:hidden;padding:var(--sp-6) var(--sp-8);display:flex;f
 .page-head h1{font-size:var(--fs-h2);font-weight:700;color:var(--text);letter-spacing:-.015em;margin:var(--sp-05) 0 0;line-height:1.1}
 .page-head p{color:var(--text-secondary);font-size:var(--fs-small);margin-top:var(--sp-05)}
 
-/* 页面内容区：flex:1 占满剩余空间，overflow:hidden 防止溢出 */
-.page{display:none;flex:1;flex-direction:column;min-height:0}
-.page.active{display:flex}
+/* 页面内容区 */
+.page{position:absolute;inset:0;display:flex;flex-direction:column;min-height:0;opacity:0;visibility:hidden;transition:opacity var(--dur-page) var(--ease-out)}
+.page.active{position:relative;opacity:1;visibility:visible}
 
 /* 滚动容器 — 仅在面板内部滚动 */
 .scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4);min-height:0;
@@ -86,7 +86,8 @@ nav button i{display:inline-block;width:28px;font-style:normal;font-size:var(--f
 nav button:active{transform:scale(.97)}
 @media(hover:hover)and (pointer:fine){nav button:hover{background:var(--bg-subtle);color:var(--text-body)}}
 nav button.active{position:relative;background:var(--bg-subtle);color:var(--text);font-weight:700}
-nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bottom:var(--sp-2);width:var(--rail);border-radius:var(--r-pill);background:var(--accent)}
+nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bottom:var(--sp-2);width:var(--rail);border-radius:var(--r-pill);background:var(--accent);animation:slideIn var(--dur-page) var(--ease-out)}
+@keyframes slideIn{from{opacity:0;transform:scaleY(0)}to{opacity:1;transform:scaleY(1)}}
 .aside-foot{margin-top:auto;padding:var(--sp-4) var(--sp-3);border-top:1px solid var(--border);font-size:var(--fs-tiny);color:var(--text-muted);display:flex;flex-direction:column;gap:var(--sp-2)}
 .aside-foot .dot{display:inline-block;width:6px;height:6px;margin-right:var(--sp-2);border-radius:50%;background:var(--text-muted)}
 
@@ -256,7 +257,7 @@ html.theme-transition *::after {
   transition: background-color .3s var(--ease-out), color .3s var(--ease-out), border-color .3s var(--ease-out), box-shadow .3s var(--ease-out) !important;
 }
 /* 主题按钮 */
-.theme-btn{border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-4);background:var(--bg-surface);color:var(--text-secondary);font-size:var(--fs-small);font-weight:600;cursor:pointer;transition:all var(--dur-press) var(--ease-out)}
+.theme-btn{border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-4);background:var(--bg-surface);color:var(--text-secondary);font-size:var(--fs-small);font-weight:600;cursor:pointer;transition:background var(--dur-press) var(--ease-out),color var(--dur-press) var(--ease-out),border-color var(--dur-press) var(--ease-out),transform var(--dur-press) var(--ease-out)}
 .theme-btn:active{transform:scale(.97)}
 .theme-btn.active{border-color:var(--accent);background:var(--accent);color:var(--accent-on)}
 @media(hover:hover)and (pointer:fine){.theme-btn:not(.active):hover{border-color:var(--border-strong);color:var(--text-body)}}
@@ -545,7 +546,9 @@ function switchHomeTab(tab) {
   document.querySelectorAll('.home-tab').forEach(b => b.classList.toggle('active', b.dataset.htab === tab));
   ['overview','guide','manual'].forEach(t => {
     const el = document.getElementById('htab-' + t);
-    if (el) el.style.display = t === tab ? 'block' : 'none';
+    if (!el) return;
+    if (t === tab) { el.style.display = 'block'; el.style.opacity = '1'; }
+    else { el.style.display = 'none'; el.style.opacity = '0'; }
   });
 }
 
