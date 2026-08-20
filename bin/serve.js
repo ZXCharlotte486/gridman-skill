@@ -81,3 +81,11 @@ server.listen(PORT, () => {
   console.log(`  console.html exists: ${fs.existsSync(path.join(ROOT, 'console.html'))}`);
   console.log(`  Press Ctrl+C to stop.`);
 });
+
+// 无活动自动退出（60秒无请求）
+let lastActivity = Date.now();
+const IDLE_TIMEOUT = 3 * 60 * 1000;
+server.on('request', () => { lastActivity = Date.now(); });
+setInterval(() => {
+  if (Date.now() - lastActivity > IDLE_TIMEOUT) { process.exit(0); }
+}, 10000);
