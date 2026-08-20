@@ -199,6 +199,19 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
 .badge-muted{background:var(--bg-subtle);color:var(--text-muted);border:1px solid var(--border)}
 
 /* ===== 17. 动效与可访问性 ===== */
+/* 主题切换全局过渡 */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color .3s var(--ease-out), color .3s var(--ease-out), border-color .3s var(--ease-out), box-shadow .3s var(--ease-out) !important;
+}
+/* 主题按钮 */
+.theme-btn{border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-4);background:var(--bg-surface);color:var(--text-secondary);font-size:var(--fs-small);font-weight:600;cursor:pointer;transition:all var(--dur-press) var(--ease-out)}
+.theme-btn:active{transform:scale(.97)}
+.theme-btn.active{border-color:var(--accent);background:var(--accent);color:var(--accent-on)}
+@media(hover:hover)and (pointer:fine){.theme-btn:not(.active):hover{border-color:var(--border-strong);color:var(--text-body)}}
+
 @media(prefers-reduced-motion:reduce){
   *{transition-duration:0ms!important;animation-duration:0ms!important}
 }
@@ -365,10 +378,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <div class="card">
         <h2>主题</h2>
         <p style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-4)">默认跟随系统。手动选过就记住。浅色与深色是两套独立取值，不是互相反转亮度。</p>
-        <div style="display:flex;gap:var(--sp-2)">
-          <button class="strip btn" onclick="setTheme('light')">浅色</button>
-          <button class="strip btn" onclick="setTheme('dark')">深色</button>
-          <button class="strip btn" onclick="setTheme('system')">跟随系统</button>
+        <div id="theme-btns" style="display:flex;gap:var(--sp-2)">
+          <button class="theme-btn" data-val="light" onclick="setTheme('light')">浅色</button>
+          <button class="theme-btn" data-val="dark" onclick="setTheme('dark')">深色</button>
+          <button class="theme-btn" data-val="system" onclick="setTheme('system')">跟随系统</button>
         </div>
       </div>
     </div>
@@ -419,15 +432,32 @@ document.getElementById('mind-tabs').addEventListener('click', e => {
 
 /* ===== 主题 ===== */
 function setTheme(t) {
+  // 记录选择
+  const choice = t;
   if (t === 'system') {
     localStorage.removeItem('gridman.theme');
     t = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
   } else {
     localStorage.setItem('gridman.theme', t);
   }
+  // 过渡动画
+  document.documentElement.classList.add('theme-transition');
   document.documentElement.setAttribute('data-theme', t);
+  setTimeout(() => document.documentElement.classList.remove('theme-transition'), 350);
+  // 更新按钮选中态
+  updateThemeBtns(choice);
 }
-(function() { const s = localStorage.getItem('gridman.theme'); if (s) document.documentElement.setAttribute('data-theme', s); })();
+function updateThemeBtns(choice) {
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.val === choice);
+  });
+}
+(function() {
+  const s = localStorage.getItem('gridman.theme');
+  if (s) document.documentElement.setAttribute('data-theme', s);
+  // 页面加载时标记当前选中
+  setTimeout(() => updateThemeBtns(s || 'system'), 0);
+})();
 
 /* ===== 数据加载 ===== */
 const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
