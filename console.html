@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -590,8 +590,8 @@ function updateThemeBtns(choice) {
 }
 (function() {
   const s = localStorage.getItem('gridman.theme');
-  if (s) document.documentElement.setAttribute('data-theme', s);
-  // 页面加载时标记当前选中
+  const theme = s || (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
   setTimeout(() => updateThemeBtns(s || 'system'), 0);
 })();
 
