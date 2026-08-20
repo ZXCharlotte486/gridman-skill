@@ -692,17 +692,17 @@ async function loadKnowledgeIndex(m) {
     specialized: '专项财务', academic: '学术与案例', sources: '官方来源入口'
   };
 
-  let index = null;
+  let docs = [];
 
-  // 拉远程 index.json（使用 UTF-8 安全解码）
+  // 拉远程 INDEX.md（markdown 表格格式）
   if (m.token && m.knowledge_source) {
     try {
       const platform = m.platform || 'github';
       let url;
       if (platform === 'gitee') {
-        url = 'https://gitee.com/api/v5/repos/' + m.knowledge_source + '/contents/index.json?access_token=' + m.token;
+        url = 'https://gitee.com/api/v5/repos/' + m.knowledge_source + '/contents/INDEX.md?access_token=' + m.token;
       } else {
-        url = 'https://api.github.com/repos/' + m.knowledge_source + '/contents/index.json';
+        url = 'https://api.github.com/repos/' + m.knowledge_source + '/contents/INDEX.md';
       }
       const headers = platform === 'github'
         ? { 'Authorization': 'Bearer ' + m.token, 'Accept': 'application/vnd.github.v3+json' }
@@ -710,10 +710,9 @@ async function loadKnowledgeIndex(m) {
       const res = await fetch(url, { headers });
       if (res.ok) {
         const json = await res.json();
-        // 关键修复：使用 TextDecoder 解码 UTF-8 Base64
         const content = decodeBase64UTF8(json.content);
-        index = JSON.parse(content);
-        window._indexData = index;
+        docs = parseIndexMd(content);
+        window._indexData = { documents: docs };
       }
     } catch (e) { console.warn('知识索引加载失败:', e); }
   }
@@ -723,8 +722,7 @@ async function loadKnowledgeIndex(m) {
   modList.innerHTML = all.map(mod => {
     const on = enabled.includes(mod);
     const title = titles[mod] || mod;
-    let docCount = 0;
-    if (index) docCount = index.documents.filter(d => d.module_id === mod).length;
+    const docCount = docs.filter(d => d.module_id === mod).length;
     const desc = docCount > 0 ? docCount + ' 个文件' : '—';
     return '<div class="mod-row' + (on ? '' : ' off') + '">'
       + '<div class="info"><b>' + title + '</b><small>' + mod + ' · ' + desc + (on ? ' · 已启用' : ' · 已关闭') + '</small></div>'
@@ -734,8 +732,8 @@ async function loadKnowledgeIndex(m) {
 
   // 渲染文件列表（右侧栏）
   const fileList = document.getElementById('file-list');
-  if (index && index.documents.length > 0) {
-    const enabledDocs = index.documents.filter(d => enabled.includes(d.module_id));
+  if (docs.length > 0) {
+    const enabledDocs = docs.filter(d => enabled.includes(d.module_id));
     document.getElementById('k-docs').textContent = enabledDocs.length;
     document.getElementById('h-docs').textContent = enabledDocs.length;
     fileList.innerHTML = enabledDocs.map(d =>
@@ -747,6 +745,20 @@ async function loadKnowledgeIndex(m) {
   } else {
     fileList.innerHTML = '<div class="empty"><span class="ic">▣</span><h2>无法加载知识索引</h2><p>检查 Token 和网络连接。</p></div>';
   }
+}
+
+/* ===== 解析 INDEX.md markdown 表格 ===== */
+function parseIndexMd(content) {
+  const lines = content.split('\n').filter(l => l.startsWith('|') && !l.startsWith('| 文件') && !l.startsWith('|--'));
+  return lines.map(line => {
+    const cols = line.split('|').map(c => c.trim()).filter(c => c);
+    if (cols.length < 3) return null;
+    const path = cols[0];  // audit-应收账龄.md
+    const title = cols[1]; // 描述
+    const keywords = cols[2].split(',').map(k => k.trim());
+    const module_id = path.split('-')[0]; // 前缀 = 模块
+    return { path, title, keywords, module_id };
+  }).filter(Boolean);
 }
 
 /* ===== 模块开关 ===== */
@@ -944,21 +956,16 @@ async function postInit() {
 let _indexData = null;
 async function loadIndex() {
   if (_indexData) return _indexData;
-  // 从 localhost 读
-  try {
-    const r = await fetch('/index.json');
-    if (r.ok) { _indexData = await r.json(); return _indexData; }
-  } catch (e) {}
-  // 降级：从远程拉
+  // 从远程拉 INDEX.md
   const m = window._manifest || getCachedManifest();
   if (m && m.token && m.knowledge_source) {
     try {
       const platform = m.platform || 'github';
       let url;
       if (platform === 'gitee') {
-        url = 'https://gitee.com/api/v5/repos/' + m.knowledge_source + '/contents/index.json?access_token=' + m.token;
+        url = 'https://gitee.com/api/v5/repos/' + m.knowledge_source + '/contents/INDEX.md?access_token=' + m.token;
       } else {
-        url = 'https://api.github.com/repos/' + m.knowledge_source + '/contents/index.json';
+        url = 'https://api.github.com/repos/' + m.knowledge_source + '/contents/INDEX.md';
       }
       const headers = platform === 'github'
         ? { 'Authorization': 'Bearer ' + m.token, 'Accept': 'application/vnd.github.v3+json' }
@@ -967,7 +974,7 @@ async function loadIndex() {
       if (res.ok) {
         const json = await res.json();
         const content = decodeBase64UTF8(json.content);
-        _indexData = JSON.parse(content);
+        _indexData = { documents: parseIndexMd(content) };
         return _indexData;
       }
     } catch (e) {}
