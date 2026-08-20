@@ -32,10 +32,13 @@ async function fetchFile(platform, repo, filePath, token) {
   let url;
   const headers = { 'User-Agent': 'gridman-skill-init' };
 
+  // 路径中的每段分别编码，保留 /
+  const encodedPath = filePath.split('/').map(encodeURIComponent).join('/');
+
   if (platform === 'gitee') {
-    url = `${GITEE_API}/${repo}/contents/${encodeURIComponent(filePath)}?access_token=${token}`;
+    url = `${GITEE_API}/${repo}/contents/${encodedPath}?access_token=${token}`;
   } else {
-    url = `${GITHUB_API}/${repo}/contents/${encodeURIComponent(filePath)}`;
+    url = `${GITHUB_API}/${repo}/contents/${encodedPath}`;
     headers['Authorization'] = `Bearer ${token}`;
     headers['Accept'] = 'application/vnd.github.v3+json';
   }
@@ -128,7 +131,10 @@ async function main() {
         try {
           const fileRes = await fetchFile(platform, DEFAULT_MODES, mode.path, token.trim());
           const content = decodeBase64(fileRes.content);
-          fs.writeFileSync(path.join(root, 'modes', mode.path), content, 'utf-8');
+          const localPath = path.join(root, 'modes', mode.path);
+          // 确保子目录存在（sys/ biz/）
+          fs.mkdirSync(path.dirname(localPath), { recursive: true });
+          fs.writeFileSync(localPath, content, 'utf-8');
           console.log(`  ✓ modes/${mode.path}`);
         } catch (e) {
           console.log(`  ✗ modes/${mode.path} — ${e.message}`);
