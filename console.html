@@ -291,21 +291,30 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 <main>
 <div id="mode-bar" class="strip"></div>
 
-<!-- ===== 首页 ===== -->
+<!-- ===== 首页（还原0.1.0布局） ===== -->
 <div class="page active" id="page-home">
   <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>首页</h1><p>有没有出事、下一步做什么，以及接入与使用文档。</p></div>
   <div class="scroll">
+    <!-- Alert 横幅 -->
     <div class="alert-slab" id="home-alert">
       <div><div class="count" id="alert-num">—</div><div class="desc" id="alert-desc">加载数据后显示状态。</div></div>
       <button onclick="navTo('knowledge')">查看知识空间</button>
     </div>
-    <div class="metrics" id="home-metrics">
-      <div class="m-card"><span>01</span><b id="h-docs">—</b><small>可检索知识文件</small></div>
-      <div class="m-card"><span>02</span><b id="h-mods">—</b><small>启用模块</small></div>
-      <div class="m-card"><span>03</span><b id="h-mind">—</b><small>Mind 记录</small></div>
-      <div class="m-card"><span>04</span><b id="h-evi">—</b><small>Evidence</small></div>
+    <!-- 三张卡片 -->
+    <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+      <div class="m-card"><span>01</span><b id="h-runs">0</b><small>运行记录</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">尚无确定性运行结果</p></div>
+      <div class="m-card"><span>02</span><b>未执行</b><small>证据验证</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">纯数据是式动作，打开页面不产生动作。到运行证据页面查阅「验证可区」。</p></div>
+      <div class="m-card"><span>03</span><b>MCP · CLI</b><small>本机接入通路</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">Console 不记录接入端子历史。所以这里展「开放了哪些通路」，不展「谁连上了」。</p></div>
     </div>
-    <div class="note">
+    <!-- 知识与资产 -->
+    <h3 style="font-size:var(--fs-small);color:var(--text-muted);margin-top:var(--sp-4);margin-bottom:var(--sp-3)">知识与资产</h3>
+    <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+      <div class="m-card"><span>可检索知识</span><b id="h-docs">—</b><small id="h-mods">— 模块启用</small></div>
+      <div class="m-card"><span>Mind 记录</span><b id="h-mind">0</b><small>属于你，不属于适配包。卸载适配包也不会删除。</small></div>
+      <div class="m-card"><span>网络</span><b id="h-net">未使用</b><small>Console 不主动上传业务文件。取决于模型上传与数据处理方式。</small></div>
+    </div>
+    <!-- 底部说明 -->
+    <div class="note" style="margin-top:var(--sp-4)">
       <strong>这个界面用来确认资产与状态，不是发起任务的地方</strong>
       <p>任务在宿主（Kiro / DSH / Cursor）里发起。Console 展示本地资产和知识状态。</p>
     </div>
@@ -408,56 +417,80 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   </div>
 </div>
 
-<!-- ===== Evidence ===== -->
+<!-- ===== Evidence（0.1.0双栏：左列表+右详情） ===== -->
 <div class="page" id="page-evidence">
   <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>Evidence</h1><p>单次运行的输入身份、参数、验收与哈希。证据验证只复算文件，不重新执行任务。</p></div>
-  <div class="scroll">
-    <div class="card">
-      <h2>运行记录</h2>
-      <div id="evi-body">
-        <div class="empty"><span class="ic">✓</span><h2>暂无 Evidence</h2><p>通过 Agent 执行确定性任务后，会在此留下可复核证据。</p></div>
+  <div class="search-workspace" style="flex:1;min-height:0">
+    <div class="result-panel">
+      <div class="panel-head"><span>运行记录</span><em id="evi-count">0</em></div>
+      <div class="result-scroll" id="evi-list">
+        <div class="empty"><span class="ic">✓</span><h2>暂无 Evidence</h2><p>由 Agent 完成确定性任务后，记录会出现在这里。</p></div>
       </div>
     </div>
-    <div class="note">
-      <strong>SHA-256 证明文件未被修改，不证明结论正确</strong>
-      <p>哈希覆盖的是计算过程的可复核性。业务结论是否正确，仍需有权人员判断。</p>
+    <div class="doc-panel">
+      <div class="doc-head"><div><b>选择一条运行记录</b><small>验收、参数与证据将在这里展开。</small></div></div>
+      <div class="doc-body" id="evi-detail">
+        <div class="empty"><span class="ic">◇</span><h2>选择一条运行记录</h2><p>验收、参数与证据将在这里展开。</p></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ===== 设置 ===== -->
+<!-- ===== 设置（0.1.0双栏：左主内容+右侧运行时信息） ===== -->
 <div class="page" id="page-settings">
   <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>设置</h1><p>数据位置、接入方式、外观与边界声明。</p></div>
-  <div class="scroll">
-    <div class="tabs" id="set-tabs">
-      <button class="active" data-tab="data">数据</button>
-      <button data-tab="appearance">外观</button>
-      <button data-tab="about">关于</button>
-    </div>
+  <div class="know-layout">
+    <!-- 左栏：标签切换内容 -->
+    <div class="know-main" style="overflow-y:auto">
+      <div class="tabs" id="set-tabs">
+        <button class="active" data-tab="data">数据</button>
+        <button data-tab="appearance">外观</button>
+        <button data-tab="about">关于</button>
+      </div>
 
-    <div id="set-data" class="set-panel">
-      <div class="card"><h2>框架配置</h2><div id="cfg-list"></div></div>
-    </div>
+      <div id="set-data" class="set-panel">
+        <div class="card"><h2>框架配置</h2><div id="cfg-list"></div></div>
+      </div>
 
-    <div id="set-appearance" class="set-panel" style="display:none">
-      <div class="card">
-        <h2>主题</h2>
-        <p style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-4)">默认跟随系统。手动选过就记住。浅色与深色是两套独立取值，不是互相反转亮度。</p>
-        <div id="theme-btns" style="display:flex;gap:var(--sp-2)">
-          <button class="theme-btn" data-val="light" onclick="setTheme('light')">浅色</button>
-          <button class="theme-btn" data-val="dark" onclick="setTheme('dark')">深色</button>
-          <button class="theme-btn" data-val="system" onclick="setTheme('system')">跟随系统</button>
+      <div id="set-appearance" class="set-panel" style="display:none">
+        <div class="card">
+          <h2>主题</h2>
+          <p style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-4)">默认跟随系统。手动选过就记住。浅色与深色是两套独立取值，不是互相反转亮度。</p>
+          <div id="theme-btns" style="display:flex;gap:var(--sp-2)">
+            <button class="theme-btn" data-val="light" onclick="setTheme('light')">浅色</button>
+            <button class="theme-btn" data-val="dark" onclick="setTheme('dark')">深色</button>
+            <button class="theme-btn" data-val="system" onclick="setTheme('system')">跟随系统</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div id="set-about" class="set-panel" style="display:none">
-      <div class="card">
-        <h2>Gridman Console 0.2.0</h2>
-        <p style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-4)">本地运行的管理面板。它是可替换的——删除 Console 不会删除你的 Mind 和 Evidence。</p>
+      <div id="set-about" class="set-panel" style="display:none">
+        <div class="card">
+          <h2>Gridman Console 0.2.0</h2>
+          <p style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-4)">本地运行的管理面板。它是可替换的——删除 Console 不会删除你的 Mind 和 Evidence。</p>
+        </div>
+        <div class="note"><strong>专业边界</strong><p>本工具提供专业知识指引与工作辅助，不构成正式审计意见、税务建议或法律意见。税率、文号、优惠期限以官方最新发布为准。</p></div>
+        <div class="note"><strong>Evidence 的诚实边界</strong><p>哈希证明文件身份和未被修改，不能证明业务结论正确。对外使用「可复核证据包」，不使用「绝对正确」「不可否认」。</p></div>
       </div>
-      <div class="note"><strong>专业边界</strong><p>本工具提供专业知识指引与工作辅助，不构成正式审计意见、税务建议或法律意见。税率、文号、优惠期限以官方最新发布为准。</p></div>
-      <div class="note"><strong>Evidence 的诚实边界</strong><p>哈希证明文件身份和未被修改，不能证明业务结论正确。对外使用「可复核证据包」，不使用「绝对正确」「不可否认」。</p></div>
+    </div>
+    <!-- 右栏：运行时信息 -->
+    <div class="know-side">
+      <div class="card">
+        <h2 style="margin-bottom:var(--sp-3)">运行时</h2>
+        <div style="margin-bottom:var(--sp-4)"><b style="font-size:var(--fs-lead);color:var(--text)">Gridman Console</b><br><small style="color:var(--text-muted)">版本 0.2.0</small></div>
+        <div class="set-row"><span class="k">平台</span><span class="v" id="rt-platform">—</span></div>
+        <div class="set-row"><span class="k">知识源</span><span class="v" id="rt-source">—</span></div>
+        <div class="set-row"><span class="k">模式源</span><span class="v" id="rt-modes">—</span></div>
+      </div>
+      <div class="card">
+        <h2 style="margin-bottom:var(--sp-3)">本机状态</h2>
+        <div class="set-row"><span class="k">网络</span><span class="v" style="color:var(--text-muted)">未使用</span></div>
+        <div class="set-row"><span class="k">数据目录可写</span><span class="v" id="rt-writable">—</span></div>
+      </div>
+      <div class="note">
+        <strong>边界</strong>
+        <p>Console 和 Rescue Pack 不主动上传业务文件。取决于模型上传与数据处理方式——进一步 Console 无法代为保证。</p>
+      </div>
     </div>
   </div>
 </div>
@@ -585,9 +618,19 @@ function render(m) {
 
   // 首页
   document.getElementById('h-docs').textContent = '—';
-  document.getElementById('h-mods').textContent = enabled.length + ' / ' + all.length;
+  document.getElementById('h-mods').textContent = enabled.length + ' / ' + all.length + ' 模块启用';
   document.getElementById('alert-num').textContent = enabled.length;
   document.getElementById('alert-desc').textContent = '个模块已启用。知识源: ' + (m.knowledge_source || '—');
+
+  // 设置右栏运行时
+  const rtPlatform = document.getElementById('rt-platform');
+  const rtSource = document.getElementById('rt-source');
+  const rtModes = document.getElementById('rt-modes');
+  const rtWritable = document.getElementById('rt-writable');
+  if (rtPlatform) rtPlatform.textContent = m.platform || '—';
+  if (rtSource) rtSource.textContent = m.knowledge_source || '—';
+  if (rtModes) rtModes.textContent = m.modes_source || '—';
+  if (rtWritable) rtWritable.textContent = dh ? '是' : (isLocal ? '否（localhost只读）' : '需选目录');
 
   // 知识空间
   document.getElementById('k-docs').textContent = '—';
@@ -737,7 +780,8 @@ async function refreshDoctor() {
 
 /* ===== Evidence 展示 ===== */
 async function loadEvidence() {
-  const body = document.getElementById('evi-body');
+  const eviList = document.getElementById('evi-list');
+  const eviCount = document.getElementById('evi-count');
   let files = [];
   if (isLocal) {
     try {
@@ -756,13 +800,14 @@ async function loadEvidence() {
       for await (const [n] of sub) { if (n.endsWith('.json')) files.push(n); }
     } catch (e) {}
   }
-  document.getElementById('h-evi').textContent = files.length;
+  if (eviCount) eviCount.textContent = files.length;
+  document.getElementById('h-runs').textContent = files.length;
   if (files.length === 0) {
-    body.innerHTML = '<div class="empty"><span class="ic">✓</span><h2>暂无 Evidence</h2><p>通过 Agent 执行确定性任务后，会在此留下可复核证据。</p></div>';
+    eviList.innerHTML = '<div class="empty"><span class="ic">✓</span><h2>暂无 Evidence</h2><p>由 Agent 完成确定性任务后，记录会出现在这里。</p></div>';
     return;
   }
-  body.innerHTML = files.map(f =>
-    '<div class="rec"><b>' + f.replace('.json', '') + '</b><span class="meta">SHA-256 记录</span></div>'
+  eviList.innerHTML = files.map(f =>
+    '<div class="result-row"><i>✓</i><div><b>' + f.replace('.json', '') + '</b><div class="result-meta"><span>SHA-256 记录</span></div></div></div>'
   ).join('');
 }
 
