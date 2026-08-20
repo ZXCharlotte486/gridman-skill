@@ -602,13 +602,49 @@ let dh = null;
 function cacheManifest(m) { try { localStorage.setItem('gridman.manifest', JSON.stringify(m)); } catch(e){} }
 function getCachedManifest() { try { const s = localStorage.getItem('gridman.manifest'); return s ? JSON.parse(s) : null; } catch(e){ return null; } }
 
+/* ===== IndexedDB 持久化 directory handle ===== */
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('gridman-console', 1);
+    req.onupgradeneeded = () => req.result.createObjectStore('handles');
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function saveDirHandle(handle) {
+  try { const db = await openDB(); const tx = db.transaction('handles','readwrite'); tx.objectStore('handles').put(handle,'dataDir'); } catch(e){}
+}
+async function loadDirHandle() {
+  try {
+    const db = await openDB();
+    return new Promise(resolve => {
+      const tx = db.transaction('handles','readonly');
+      const req = tx.objectStore('handles').get('dataDir');
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => resolve(null);
+    });
+  } catch(e){ return null; }
+}
+
 async function init() {
   const bar = document.getElementById('mode-bar');
   if (isLocal) {
     bar.textContent = '模式 A — localhost';
     await loadA();
   } else {
-    // 模式B：先用缓存 manifest 直接连远程，不需要每次选目录
+    // 尝试恢复之前的 directory handle
+    const savedHandle = await loadDirHandle();
+    if (savedHandle) {
+      // 请求权限（用户只需点一次"允许"）
+      const perm = await savedHandle.requestPermission({ mode: 'readwrite' }).catch(() => 'denied');
+      if (perm === 'granted') {
+        dh = savedHandle;
+        bar.textContent = '已连接 — ' + dh.name;
+        await loadB();
+        return;
+      }
+    }
+    // 降级：用缓存的 manifest 直接连远程
     const cached = getCachedManifest();
     if (cached && cached.token && cached.knowledge_source) {
       bar.innerHTML = '远程知识已连接 · <button class="btn" onclick="pickDir()">选择本地目录(可选)</button>';
@@ -623,7 +659,8 @@ async function init() {
 async function pickDir() {
   if (!('showDirectoryPicker' in window)) { document.getElementById('mode-bar').textContent = '需要 Chrome/Edge'; return; }
   try {
-    dh = await window.showDirectoryPicker();
+    dh = await window.showDirectoryPicker({ mode: 'readwrite' });
+    await saveDirHandle(dh);
     document.getElementById('mode-bar').textContent = '已连接 — ' + dh.name;
     await loadB();
   } catch (e) { document.getElementById('mode-bar').textContent = '取消: ' + e.message; }
