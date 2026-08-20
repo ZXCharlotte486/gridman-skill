@@ -145,17 +145,57 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
 .sw.on::after{transform:translateX(16px)}
 .sw:active{transform:scale(.95)}
 
-/* ===== 9. 检索页 ===== */
-.search-layout{flex:1;display:flex;flex-direction:column;gap:var(--sp-4);min-height:0}
-.search-bar{display:flex;gap:var(--sp-3)}
-.search-bar input{flex:1;padding:var(--sp-3) var(--sp-4);border:1px solid var(--border);border-radius:var(--r-md);background:var(--bg-subtle);color:var(--text-body);font-size:var(--fs-body);outline:none;transition:border-color var(--dur-press) var(--ease-out)}
-.search-bar input:focus{border-color:var(--accent)}
-.search-bar button{border:1px solid var(--accent);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-5);background:var(--accent);color:var(--accent-on);font-size:var(--fs-small);font-weight:600;cursor:pointer;transition:transform var(--dur-press) var(--ease-out)}
+/* ===== 9. 检索页（还原0.1.0三段布局） ===== */
+.search-page{min-height:0;flex:1;display:flex;flex-direction:column;gap:var(--sp-4)}
+.search-bar{flex:0 0 auto;display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2);border:1px solid var(--border-strong);border-radius:var(--r-lg);background:var(--bg-surface)}
+.search-bar>i{display:grid;place-items:center;width:32px;flex:0 0 auto;color:var(--text-muted);font-style:normal;font-size:var(--fs-lead)}
+.search-bar input{min-width:0;flex:1;border:0;padding:var(--sp-2) 0;background:transparent;color:var(--text);font-size:var(--fs-body);outline:none}
+.search-bar input::placeholder{color:var(--text-muted)}
+.search-bar button{flex:0 0 auto;border:1px solid transparent;border-radius:var(--r-md);padding:var(--sp-2) var(--sp-5);background:var(--accent);color:var(--accent-on);font-size:var(--fs-small);font-weight:700;cursor:pointer;transition:transform var(--dur-press) var(--ease-out)}
 .search-bar button:active{transform:scale(.97)}
-.search-results{flex:1;overflow-y:auto;min-height:0;
-  scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
-.search-results::-webkit-scrollbar{width:6px}
-.search-results::-webkit-scrollbar-thumb{border-radius:var(--r-pill);background:var(--border-strong)}
+/* 查询计划横幅 + 路由卡片 */
+.plan-strip{flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:var(--sp-3)}
+.plan-banner{min-width:0;display:flex;flex-direction:column;gap:var(--sp-3);padding:var(--sp-4);border:1px solid var(--slab-border);border-radius:var(--r-lg);background:var(--slab-bg);color:var(--slab-fg)}
+.plan-banner>span{opacity:.62;font-size:var(--fs-micro);font-weight:700;letter-spacing:.06em}
+.plan-terms{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+.plan-terms b{padding:var(--sp-05) var(--sp-3);border:1px solid var(--border-strong);border-radius:var(--r-pill);font-size:var(--fs-tiny);font-weight:600}
+.plan-scope{display:flex;flex-wrap:wrap;gap:var(--sp-1) var(--sp-4);margin-top:auto;opacity:.78;font-size:var(--fs-micro)}
+.plan-scope em{font-style:normal;font-variant-numeric:tabular-nums}
+.route-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--sp-3)}
+.route-card{display:flex;flex-direction:column;gap:var(--sp-2);padding:var(--sp-4);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg-surface)}
+.route-card>span{color:var(--text-muted);font-size:var(--fs-micro);font-weight:800;font-variant-numeric:tabular-nums}
+.route-card b{color:var(--text);font-size:var(--fs-small);line-height:1.35}
+.route-card small{color:var(--text-muted);font-size:var(--fs-micro)}
+.route-score{display:flex;align-items:center;gap:var(--sp-2);margin-top:auto}
+.route-score>i{flex:1;height:var(--sp-1);border-radius:var(--r-pill);background:var(--n-3);overflow:hidden;font-style:normal}
+.route-score>i>b{display:block;height:100%;border-radius:var(--r-pill);background:var(--accent)}
+.route-score>em{color:var(--text-body);font-style:normal;font-size:var(--fs-micro);font-weight:700}
+.route-card.placeholder{border-style:dashed;opacity:.4}
+/* 双栏工作区 */
+.search-workspace{min-height:0;flex:1;display:grid;grid-template-columns:clamp(220px,26vw,340px) minmax(0,1fr);gap:var(--sp-3)}
+.result-panel,.doc-panel{min-width:0;min-height:0;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg-surface);overflow:hidden;display:flex;flex-direction:column}
+.panel-head{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:var(--fs-micro);font-weight:700}
+.panel-head em{font-style:normal;padding:var(--sp-05) var(--sp-2);border-radius:var(--r-pill);background:var(--bg-subtle);font-variant-numeric:tabular-nums}
+.result-scroll{min-height:0;flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
+.result-scroll::-webkit-scrollbar{width:6px}
+.result-scroll::-webkit-scrollbar-thumb{border-radius:var(--r-pill);background:var(--border-strong)}
+.result-row{display:grid;grid-template-columns:28px minmax(0,1fr);gap:var(--sp-3);width:100%;padding:var(--sp-3) var(--sp-4);border:0;border-bottom:1px solid var(--border);border-left:var(--rail) solid transparent;background:transparent;text-align:left;cursor:pointer;transition:background var(--dur-press) var(--ease-out)}
+.result-row:last-child{border-bottom:0}
+@media(hover:hover)and (pointer:fine){.result-row:hover{background:var(--bg-subtle)}}
+.result-row.selected{border-left-color:var(--accent);background:var(--bg-subtle)}
+.result-row>i{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--bg-subtle);color:var(--text-body);font-style:normal;font-size:var(--fs-tiny);font-variant-numeric:tabular-nums}
+.result-row b{display:block;color:var(--text);font-size:var(--fs-small);line-height:1.4}
+.result-meta{display:flex;flex-wrap:wrap;gap:var(--sp-05) var(--sp-3);margin-top:var(--sp-1);color:var(--text-muted);font-size:var(--fs-micro)}
+.result-hits{display:flex;flex-wrap:wrap;gap:var(--sp-1);margin-top:var(--sp-2)}
+.result-hits em{padding:1px var(--sp-2);border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg-surface);color:var(--text-secondary);font-style:normal;font-size:var(--fs-micro)}
+.doc-head{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);padding:var(--sp-3) var(--sp-5);border-bottom:1px solid var(--border)}
+.doc-head>div{min-width:0}
+.doc-head b{display:block;color:var(--text);font-size:var(--fs-small);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.doc-head small{display:block;margin-top:var(--sp-05);color:var(--text-muted);font-family:var(--font-mono);font-size:var(--fs-micro)}
+.doc-body{min-height:0;flex:1;padding:var(--sp-5);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent;font-size:var(--fs-small);line-height:1.7;color:var(--text-body)}
+.doc-body::-webkit-scrollbar{width:6px}
+.doc-body::-webkit-scrollbar-thumb{border-radius:var(--r-pill);background:var(--border-strong)}
+.doc-body mark{background:var(--exception-bg);color:var(--exception-fg);padding:1px 3px;border-radius:var(--r-sm)}
 
 /* ===== 10. 标签条 ===== */
 .tabs{display:flex;gap:var(--sp-05);margin-bottom:var(--sp-4)}
@@ -297,21 +337,43 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   </div>
 </div>
 
-<!-- ===== 知识检索 ===== -->
+<!-- ===== 知识检索（0.1.0布局：搜索栏+查询计划+双栏工作区） ===== -->
 <div class="page" id="page-search">
   <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>知识检索</h1><p>只检索已启用的模块。被关闭的模块不参与检索，古立特也读不到。</p></div>
-  <div class="search-layout">
+  <div class="search-page">
+    <!-- 搜索栏 -->
     <form id="search-form" class="search-bar">
+      <i>⌕</i>
       <input id="search-input" type="text" placeholder="用一句话提问，例如：应收账款账龄怎么分段" />
       <button type="submit">检索</button>
     </form>
-    <div id="search-scope" style="font-size:var(--fs-tiny);color:var(--text-muted)"></div>
-    <div id="search-results" class="search-results">
-      <div class="empty"><span class="ic">⌕</span><h2>还没有检索</h2><p>输入关键词匹配 index.json 中的 keywords 和 alias。检索只覆盖已启用模块。</p></div>
+    <!-- 查询计划横幅 + 路由卡片 -->
+    <div class="plan-strip">
+      <div class="plan-banner">
+        <span id="plan-label">检索范围</span>
+        <div class="plan-terms" id="plan-terms"></div>
+        <div class="plan-scope" id="plan-scope"><em>提交一句提问，按业务语义路由到相关模块。</em></div>
+      </div>
+      <div class="route-cards" id="route-cards">
+        <div class="route-card placeholder"><span>01</span><b>路由命中模块</b><small>检索后显示</small><div class="route-score"><i></i><em>—</em></div></div>
+        <div class="route-card placeholder"><span>02</span><b>路由命中模块</b><small>检索后显示</small><div class="route-score"><i></i><em>—</em></div></div>
+        <div class="route-card placeholder"><span>03</span><b>路由命中模块</b><small>检索后显示</small><div class="route-score"><i></i><em>—</em></div></div>
+      </div>
     </div>
-    <div class="note" style="flex:0 0 auto">
-      <strong>检索范围 = 已启用模块</strong>
-      <p>关闭的模块不参与检索。如果搜不到，确认相关模块是否被关闭（在知识空间页查看）。</p>
+    <!-- 双栏工作区：左结果列表 + 右文档预览 -->
+    <div class="search-workspace">
+      <div class="result-panel">
+        <div class="panel-head"><span>检索结果</span><em id="result-count">0</em></div>
+        <div class="result-scroll" id="result-list">
+          <div class="empty"><span class="ic">⌕</span><h2>还没有检索</h2><p>输入关键词匹配知识索引。检索只覆盖已启用模块。</p></div>
+        </div>
+      </div>
+      <div class="doc-panel">
+        <div class="doc-head" id="doc-head"><div><b>选择一条结果</b><small>正文按 Markdown 渲染，命中词会高亮</small></div></div>
+        <div class="doc-body" id="doc-body">
+          <div class="empty"><span class="ic">◇</span><h2>选择左侧结果查看正文</h2><p>正文从远程知识库拉取，命中词高亮显示。</p></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -790,51 +852,150 @@ document.getElementById('search-form').addEventListener('submit', async function
   const query = document.getElementById('search-input').value.trim();
   if (!query) return;
   const index = await loadIndex();
-  const results = document.getElementById('search-results');
-  const scope = document.getElementById('search-scope');
+  const resultList = document.getElementById('result-list');
+  const resultCount = document.getElementById('result-count');
+  const planLabel = document.getElementById('plan-label');
+  const planTerms = document.getElementById('plan-terms');
+  const planScope = document.getElementById('plan-scope');
+  const routeCards = document.getElementById('route-cards');
 
   if (!index || !index.documents) {
-    results.innerHTML = '<div class="empty"><span class="ic">—</span><h2>无法加载知识索引</h2><p>请确认 index.json 可访问。</p></div>';
+    resultList.innerHTML = '<div class="empty"><span class="ic">—</span><h2>无法加载知识索引</h2><p>请确认 index.json 可访问。</p></div>';
     return;
   }
 
   const enabled = window._enabledModules || [];
   const docs = index.documents.filter(d => enabled.includes(d.module_id));
-  scope.textContent = '检索范围: ' + enabled.length + ' 个模块, ' + docs.length + ' 个文档';
+  const titles = { accounting:'会计与准则', audit:'审计与内控', tax:'税务', investment:'投行与估值', compliance:'合规与经济法', analysis:'财务与经营分析', specialized:'专项财务', academic:'学术与案例', sources:'官方来源入口' };
 
-  // 关键词匹配
+  // 拆词（简单：2-6字符滑窗取命中的子串）
+  const terms = [];
+  for (let len = Math.min(query.length, 6); len >= 2; len--) {
+    for (let i = 0; i <= query.length - len; i++) {
+      const t = query.substring(i, i + len);
+      if (!terms.includes(t)) {
+        const hit = docs.some(d => ((d.keywords||[]).join(' ')+' '+(d.alias||[]).join(' ')+' '+(d.title||'')).includes(t));
+        if (hit) terms.push(t);
+      }
+    }
+    if (terms.length >= 6) break;
+  }
+
+  // 评分
   const scored = [];
   for (const doc of docs) {
     let score = 0;
-    const haystack = (doc.keywords || []).join(' ') + ' ' + (doc.alias || []).join(' ') + ' ' + (doc.title || '');
-    for (let len = Math.min(query.length, 6); len >= 2; len--) {
-      for (let i = 0; i <= query.length - len; i++) {
-        const term = query.substring(i, i + len);
-        if (haystack.includes(term)) score += len;
-      }
-    }
+    const haystack = (doc.keywords||[]).join(' ')+' '+(doc.alias||[]).join(' ')+' '+(doc.title||'');
+    for (const t of terms) { if (haystack.includes(t)) score += t.length; }
     if (score > 0) scored.push({ doc, score });
   }
   scored.sort((a, b) => b.score - a.score);
 
+  // 模块路由（按模块汇总得分取top3）
+  const modScores = {};
+  for (const s of scored) {
+    const mid = s.doc.module_id;
+    modScores[mid] = (modScores[mid] || 0) + s.score;
+  }
+  const topMods = Object.entries(modScores).sort((a,b) => b[1]-a[1]).slice(0, 3);
+  const maxModScore = topMods.length ? topMods[0][1] : 1;
+
+  // 渲染查询计划
+  planLabel.textContent = '查询计划';
+  planTerms.innerHTML = terms.slice(0, 8).map(t => '<b>' + t + '</b>').join('');
+  planScope.innerHTML = '<em>检索 ' + enabled.length + ' 个模块</em><em>命中 ' + scored.length + ' 条</em><em>知识版本 ' + (window._manifest?.manifest_version || '0.2.0') + '</em>';
+
+  // 渲染路由卡片
+  if (topMods.length > 0) {
+    routeCards.innerHTML = topMods.map(([ mid, sc ], idx) => {
+      const pct = Math.round(sc / maxModScore * 100);
+      return '<div class="route-card"><span>' + String(idx+1).padStart(2,'0') + '</span><b>' + (titles[mid]||mid) + '</b><small>gridman-knowledge · ' + mid + '</small><div class="route-score"><i><b style="width:' + pct + '%"></b></i><em>' + sc + '</em></div></div>';
+    }).join('');
+  } else {
+    routeCards.innerHTML = '<div class="route-card placeholder"><span>—</span><b>没有路由命中</b><small>换个说法试试</small></div>';
+  }
+
+  // 渲染结果列表
+  resultCount.textContent = scored.length;
   if (scored.length === 0) {
-    results.innerHTML = '<div class="empty"><span class="ic">—</span><h2>没有命中</h2><p>换个说法试试，或确认相关模块没有被关闭。</p></div>';
+    resultList.innerHTML = '<div class="empty"><span class="ic">—</span><h2>没有命中</h2><p>换个说法试试，或确认相关模块没有被关闭。</p></div>';
     return;
   }
 
-  results.innerHTML = scored.slice(0, 15).map(item => {
+  resultList.innerHTML = scored.slice(0, 20).map((item, idx) => {
     const d = item.doc;
-    const matched = (d.keywords || []).filter(k => query.includes(k));
-    return '<div class="rec" style="flex-direction:column;align-items:flex-start;gap:var(--sp-1)">'
-      + '<div style="display:flex;justify-content:space-between;width:100%"><b>' + d.title + '</b><span class="badge badge-muted">' + item.score + '</span></div>'
-      + '<div style="display:flex;gap:var(--sp-2);flex-wrap:wrap">'
-      + '<code style="font-size:var(--fs-micro)">' + d.path + '</code>'
-      + '<span class="meta">' + d.module_id + '</span>'
-      + '</div>'
-      + (matched.length ? '<div style="display:flex;gap:var(--sp-1);flex-wrap:wrap;margin-top:var(--sp-1)">' + matched.slice(0, 5).map(m => '<span style="background:var(--exception-bg);color:var(--exception-fg);padding:1px 6px;border-radius:var(--r-sm);font-size:var(--fs-micro)">' + m + '</span>').join('') + '</div>' : '')
-      + '</div>';
+    const matched = (d.keywords||[]).filter(k => terms.some(t => k.includes(t) || t.includes(k)));
+    return '<div class="result-row" data-path="' + d.path + '" data-idx="' + idx + '">'
+      + '<i>' + item.score + '</i>'
+      + '<div><b>' + d.title + '</b>'
+      + '<div class="result-meta"><span>' + d.module_id + '</span></div>'
+      + (matched.length ? '<div class="result-hits">' + matched.slice(0,4).map(m => '<em>'+m+'</em>').join('') + '</div>' : '')
+      + '</div></div>';
   }).join('');
+
+  // 点击结果行 → 右侧面板加载正文
+  resultList.querySelectorAll('.result-row').forEach(row => {
+    row.addEventListener('click', () => {
+      resultList.querySelectorAll('.result-row').forEach(r => r.classList.remove('selected'));
+      row.classList.add('selected');
+      loadDocContent(row.dataset.path, query, terms);
+    });
+  });
+
+  // 默认选中第一条
+  if (scored.length > 0) {
+    const first = resultList.querySelector('.result-row');
+    if (first) { first.classList.add('selected'); loadDocContent(first.dataset.path, query, terms); }
+  }
 });
+
+/* ===== 加载文档正文到右侧面板 ===== */
+async function loadDocContent(path, query, terms) {
+  const docHead = document.getElementById('doc-head');
+  const docBody = document.getElementById('doc-body');
+  docHead.innerHTML = '<div><b>' + path.split('/').pop().replace('.md','') + '</b><small>gridman-knowledge / ' + path + '</small></div><span class="badge badge-muted">' + terms.length + ' 个命中词</span>';
+  docBody.innerHTML = '<div class="empty"><span class="ic">…</span><h2>正在加载</h2></div>';
+
+  const m = window._manifest || getCachedManifest();
+  if (!m || !m.token || !m.knowledge_source) {
+    docBody.innerHTML = '<div class="empty"><span class="ic">—</span><h2>无法加载</h2><p>缺少 Token 或知识源配置。</p></div>';
+    return;
+  }
+
+  try {
+    const platform = m.platform || 'github';
+    let url;
+    if (platform === 'gitee') {
+      url = 'https://gitee.com/api/v5/repos/' + m.knowledge_source + '/contents/' + encodeURIComponent(path) + '?access_token=' + m.token;
+    } else {
+      url = 'https://api.github.com/repos/' + m.knowledge_source + '/contents/' + path.split('/').map(encodeURIComponent).join('/');
+    }
+    const headers = platform === 'github' ? { 'Authorization': 'Bearer ' + m.token, 'Accept': 'application/vnd.github.v3+json' } : {};
+    const res = await fetch(url, { headers });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    let content = decodeBase64UTF8(json.content);
+
+    // 高亮命中词
+    for (const t of terms) {
+      content = content.replace(new RegExp('(' + t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>');
+    }
+
+    // 简单 Markdown → HTML（标题、粗体、代码块、列表）
+    content = content
+      .replace(/^### (.+)$/gm, '<h3 style="margin:var(--sp-4) 0 var(--sp-2);color:var(--text);font-size:var(--fs-body)">$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2 style="margin:var(--sp-5) 0 var(--sp-3);color:var(--text);font-size:var(--fs-lead)">$1</h2>')
+      .replace(/^# (.+)$/gm, '<h1 style="margin:var(--sp-5) 0 var(--sp-3);color:var(--text);font-size:var(--fs-h3)">$1</h1>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code style="background:var(--bg-subtle);padding:1px 4px;border-radius:var(--r-sm);font-size:var(--fs-tiny)">$1</code>')
+      .replace(/^- (.+)$/gm, '<li style="margin-left:var(--sp-4);margin-bottom:var(--sp-1)">$1</li>')
+      .replace(/\n/g, '<br>');
+
+    docBody.innerHTML = content;
+  } catch (e) {
+    docBody.innerHTML = '<div class="empty"><span class="ic">—</span><h2>加载失败</h2><p>' + e.message + '</p></div>';
+  }
+}
 </script>
 </body>
 </html>
