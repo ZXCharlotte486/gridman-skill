@@ -60,8 +60,7 @@ main{height:100vh;overflow:hidden;padding:var(--sp-6) var(--sp-8);display:flex;f
 
 /* 页面头部固定 */
 .page-head{flex:0 0 auto;padding-bottom:var(--sp-3);border-bottom:1px solid var(--border);margin-bottom:var(--sp-3)}
-.page-head small{display:block;color:var(--text-muted);font-size:var(--fs-micro);font-weight:700;letter-spacing:.09em;text-transform:uppercase}
-.page-head h1{font-size:var(--fs-h2);font-weight:700;color:var(--text);letter-spacing:-.015em;margin:var(--sp-05) 0 0;line-height:1.1}
+.page-head h1{font-size:var(--fs-h2);font-weight:700;color:var(--text);letter-spacing:-.015em;line-height:1.1}
 .page-head p{color:var(--text-secondary);font-size:var(--fs-small);margin-top:var(--sp-05)}
 
 /* 页面内容区 */
@@ -297,10 +296,11 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
 <main>
 <div id="mode-bar" class="strip"></div>
+<div style="flex:0 0 auto;font-size:var(--fs-micro);color:var(--text-muted);font-weight:700;letter-spacing:.09em;text-transform:uppercase;margin-bottom:var(--sp-05)">GRIDMAN CONSOLE</div>
 
 <!-- ===== 首页（还原0.1.0布局：左标签栏+右内容区） ===== -->
 <div class="page active" id="page-home">
-  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>首页</h1><p>有没有出事、下一步做什么，以及接入与使用文档。</p></div>
+  <div class="page-head"><h1>首页</h1><p>有没有出事、下一步做什么，以及接入与使用文档。</p></div>
   <div style="flex:1;display:grid;grid-template-columns:auto 1fr;gap:var(--sp-5);min-height:0">
     <!-- 左标签栏 -->
     <div style="display:flex;flex-direction:column;gap:var(--sp-1);padding-top:var(--sp-2)">
@@ -350,7 +350,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
 <!-- ===== 知识空间 ===== -->
 <div class="page" id="page-knowledge">
-  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>知识空间</h1><p>启停模块。被关闭的模块不参与检索，古立特读不到。</p></div>
+  <div class="page-head"><h1>知识空间</h1><p>启停模块。被关闭的模块不参与检索，古立特读不到。</p></div>
   <div class="know-layout">
     <!-- 左栏：模块列表 -->
     <div class="know-main">
@@ -378,7 +378,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
 <!-- ===== 知识检索（0.1.0布局：搜索栏+查询计划+双栏工作区） ===== -->
 <div class="page" id="page-search">
-  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>知识检索</h1><p>只检索已启用的模块。被关闭的模块不参与检索，古立特也读不到。</p></div>
+  <div class="page-head"><h1>知识检索</h1><p>只检索已启用的模块。被关闭的模块不参与检索，古立特也读不到。</p></div>
   <div class="search-page">
     <!-- 搜索栏 -->
     <form id="search-form" class="search-bar">
@@ -419,7 +419,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
 <!-- ===== Mind ===== -->
 <div class="page" id="page-mind">
-  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>Mind</h1><p>跨宿主的专业资产与偏好。属于你，不属于 Skill。卸载适配包不会删除。</p></div>
+  <div class="page-head"><h1>Mind</h1><p>跨宿主的专业资产与偏好。属于你，不属于 Skill。卸载适配包不会删除。</p></div>
   <div class="scroll">
     <div class="card">
       <h2>专业资产</h2>
@@ -446,7 +446,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
 <!-- ===== Evidence（0.1.0双栏：左列表+右详情） ===== -->
 <div class="page" id="page-evidence">
-  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>Evidence</h1><p>单次运行的输入身份、参数、验收与哈希。证据验证只复算文件，不重新执行任务。</p></div>
+  <div class="page-head"><h1>Evidence</h1><p>单次运行的输入身份、参数、验收与哈希。证据验证只复算文件，不重新执行任务。</p></div>
   <div class="search-workspace" style="flex:1;min-height:0">
     <div class="result-panel">
       <div class="panel-head"><span>运行记录</span><em id="evi-count">0</em></div>
@@ -465,7 +465,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
 <!-- ===== 设置（0.1.0双栏：左主内容+右侧运行时信息） ===== -->
 <div class="page" id="page-settings">
-  <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>设置</h1><p>数据位置、接入方式、外观与边界声明。</p></div>
+  <div class="page-head"><h1>设置</h1><p>数据位置、接入方式、外观与边界声明。</p></div>
   <div class="know-layout">
     <!-- 左栏：标签切换内容 -->
     <div class="know-main" style="overflow-y:auto">
