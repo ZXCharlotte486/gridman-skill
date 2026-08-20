@@ -148,12 +148,25 @@ async function main() {
     console.log('\n  跳过模式拉取（无 Token）。');
   }
 
-  // 7. 拷贝 console.html
+  // 7. 拷贝 console.html + serve.js + start.vbs
   const consoleSrc = path.join(__dirname, '..', 'console.html');
   if (fs.existsSync(consoleSrc)) {
     fs.copyFileSync(consoleSrc, path.join(root, 'console.html'));
     console.log('  ✓ console.html');
   }
+
+  // 拷贝 serve.js
+  const serveSrc = path.join(__dirname, 'serve.js');
+  const serveDest = path.join(root, 'serve.js');
+  if (fs.existsSync(serveSrc)) {
+    fs.copyFileSync(serveSrc, serveDest);
+    console.log('  ✓ serve.js');
+  }
+
+  // 生成 start.vbs（用户双击启动）
+  const startVbs = `Set shell = CreateObject("WScript.Shell")\nshell.Run "node ""${serveDest.replace(/\\/g, '\\\\')}""  ""${root.replace(/\\/g, '\\\\')}"" ", 0, False\nWScript.Sleep 800\nshell.Run "http://localhost:3721", 0, False\n`;
+  fs.writeFileSync(path.join(root, 'start.vbs'), startVbs, 'utf-8');
+  console.log('  ✓ start.vbs');
 
   console.log('\n  ══════════════════════════════════════');
   console.log('  安装完成！');
@@ -162,9 +175,9 @@ async function main() {
   console.log(`  Token:  ${token.trim() ? '已配置' : '未配置'}`);
   console.log('');
   console.log('  下一步:');
+  console.log('  • 双击 start.vbs 打开 Console');
   console.log('  • 在宿主（Kiro/Cursor/DSH）中加载 Gridman Skill');
   console.log('  • 向古立特提一个财税问题试试');
-  console.log(`  • 打开 Console: ${path.join(root, 'console.html')}`);
   console.log('  ══════════════════════════════════════\n');
 
   rl.close();
