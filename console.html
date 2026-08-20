@@ -849,8 +849,9 @@ async function loadEviDetail(filename) {
     html += '</div>';
     // 验收状态
     if (data.acceptance_status) {
-      const statusColor = data.acceptance_status === 'passed' ? 'var(--pass-fg)' : data.acceptance_status === 'failed' ? 'var(--fail-fg)' : 'var(--exception-fg)';
-      html += '<div style="padding:var(--sp-3);border-radius:var(--r-md);background:var(--bg-subtle);border:1px solid var(--border)"><span style="color:' + statusColor + ';font-weight:700">' + data.acceptance_status.toUpperCase() + '</span></div>';
+      const statusMap = { passed: { color: 'var(--pass-fg)', bg: 'var(--pass-bg)', border: 'var(--pass-border)', icon: '✓', label: 'PASSED' }, passed_with_exceptions: { color: 'var(--exception-fg)', bg: 'var(--exception-bg)', border: 'var(--exception-border)', icon: '!', label: 'PASSED WITH EXCEPTIONS' }, failed: { color: 'var(--fail-fg)', bg: 'var(--fail-bg)', border: 'var(--fail-border)', icon: '✗', label: 'FAILED' }, not_run: { color: 'var(--pending-fg)', bg: 'var(--pending-bg)', border: 'var(--pending-border)', icon: '○', label: 'NOT RUN' } };
+      const s = statusMap[data.acceptance_status] || statusMap['not_run'];
+      html += '<div style="padding:var(--sp-3);border-radius:var(--r-md);background:' + s.bg + ';border:1px solid ' + s.border + ';display:flex;align-items:center;gap:var(--sp-3)"><span style="display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:' + s.color + ';color:var(--bg-surface);font-weight:800;font-size:var(--fs-tiny)">' + s.icon + '</span><span style="color:' + s.color + ';font-weight:700;font-size:var(--fs-small)">' + s.label + '</span></div>';
     }
     // 字段逐项展示
     const skip = ['title','timestamp','acceptance_status'];
@@ -1030,7 +1031,13 @@ document.getElementById('search-form').addEventListener('submit', async function
   // 渲染查询计划
   planLabel.textContent = '查询计划';
   planTerms.innerHTML = terms.slice(0, 8).map(t => '<b>' + t + '</b>').join('');
-  planScope.innerHTML = '<em>检索 ' + enabled.length + ' 个模块</em><em>命中 ' + scored.length + ' 条</em><em>知识版本 ' + (window._manifest?.manifest_version || '0.2.0') + '</em>';
+  const allMods = ['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
+  const closedMods = allMods.filter(x => !enabled.includes(x));
+  let scopeHtml = '<em>检索 ' + enabled.length + ' 个模块</em><em>命中 ' + scored.length + ' 条</em><em>知识版本 ' + (window._manifest?.manifest_version || '0.2.0') + '</em>';
+  if (closedMods.length > 0) {
+    scopeHtml += '<div style="margin-top:var(--sp-2);padding:var(--sp-2) var(--sp-3);border:1px solid var(--exception-border);border-radius:var(--r-md);background:var(--exception-bg);color:var(--exception-fg);font-size:var(--fs-micro);line-height:1.5">⚠ ' + closedMods.length + ' 个模块已关闭，未参与检索：' + closedMods.join('、') + '</div>';
+  }
+  planScope.innerHTML = scopeHtml;
 
   // 渲染路由卡片
   if (topMods.length > 0) {
