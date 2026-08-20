@@ -12,12 +12,12 @@
 
 /* ===== 布局 ===== */
 .app{height:100vh;display:grid;grid-template-columns:200px minmax(0,1fr)}
-main{height:100vh;overflow-y:auto;padding:var(--sp-6) var(--sp-8);display:flex;flex-direction:column}
-.page-head{flex:0 0 auto;padding-bottom:var(--sp-5);border-bottom:1px solid var(--border);margin-bottom:var(--sp-5)}
+main{height:100vh;overflow:hidden;padding:var(--sp-6) var(--sp-8);display:flex;flex-direction:column}
+.page-head{flex:0 0 auto;padding-bottom:var(--sp-4);border-bottom:1px solid var(--border);margin-bottom:var(--sp-4)}
 .page-head small{display:block;color:var(--text-muted);font-size:var(--fs-micro);font-weight:700;letter-spacing:.09em;text-transform:uppercase}
 .page-head h1{font-size:var(--fs-h1);font-weight:700;color:var(--text);letter-spacing:-.015em;margin:var(--sp-1) 0 0}
 .page-head p{color:var(--text-secondary);font-size:var(--fs-small);margin-top:var(--sp-1)}
-.scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-5)}
+.scroll{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:var(--sp-4)}
 
 /* ===== 侧栏 ===== */
 aside{padding:var(--sp-6) var(--sp-3);border-right:1px solid var(--border);background:var(--bg-surface);display:flex;flex-direction:column}
@@ -55,7 +55,7 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
 .m-card small{display:block;font-size:var(--fs-tiny);color:var(--text-muted);margin-top:var(--sp-1)}
 
 /* ===== 双栏 ===== */
-.two-col{display:grid;grid-template-columns:1fr 260px;gap:var(--sp-5);flex:1;min-height:0}
+.two-col{display:grid;grid-template-columns:1fr 260px;gap:var(--sp-4);flex:1;min-height:0;overflow:hidden}
 .two-col .main{overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4)}
 .two-col .side{overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4)}
 .side-box{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-4)}
@@ -175,22 +175,18 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
   <div class="scroll">
     <div class="two-col">
       <div class="main">
-        <div class="card">
+        <div class="card" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
           <h2>模块</h2>
-          <div class="mod-list" id="mod-list"></div>
-        </div>
-        <div class="card">
-          <h2>知识文件</h2>
-          <div id="file-list" style="max-height:360px;overflow-y:auto"></div>
+          <div class="mod-list" id="mod-list" style="flex:1;overflow-y:auto"></div>
         </div>
       </div>
       <div class="side">
         <div class="side-box"><div class="big" id="k-docs">—</div><div class="lbl">可检索文件</div></div>
         <div class="side-box"><div class="big" id="k-mods">—</div><div class="lbl">启用 / 总模块</div><div class="bar"><i id="k-bar" style="width:0%"></i></div></div>
         <div class="side-box"><div class="big" id="k-ver">0.2.0</div><div class="lbl">知识版本</div></div>
-        <div class="note">
-          <strong>模块开关是硬边界</strong>
-          <p>关闭后该模块知识不参与检索。宿主不能自行打开——Skill 铁律保证。</p>
+        <div class="card" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0">
+          <h3 style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-2)">知识文件</h3>
+          <div id="file-list" style="flex:1;overflow-y:auto;font-size:var(--fs-tiny)"></div>
         </div>
       </div>
     </div>
@@ -222,7 +218,7 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
 <div class="page" id="page-mind">
   <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>Mind</h1><p>跨宿主的专业资产与偏好。属于你，不属于 Skill。卸载适配包不会删除。</p></div>
   <div class="scroll">
-    <div class="card">
+    <div class="card" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
       <h2>专业资产</h2>
       <div class="tabs" id="mind-tabs">
         <button class="active" data-cls="all">全部</button>
@@ -230,17 +226,9 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
         <button data-cls="judgment">判断</button>
         <button data-cls="evidence">证据索引</button>
       </div>
-      <div id="mind-body">
+      <div id="mind-body" style="flex:1;overflow-y:auto">
         <div class="empty"><span class="ic">◇</span><h2>暂无 Mind 记录</h2><p>在 Agent 中确认专业判断后，会存入 Mind。换宿主也不会丢。</p></div>
       </div>
-    </div>
-    <div class="note">
-      <strong>写入只有一条通道</strong>
-      <p>宿主不能直接改写正式资产。它只能把变化提交到候选区，由你看过差异和影响范围后接受或拒绝。</p>
-    </div>
-    <div class="note">
-      <strong>来源必须分得清</strong>
-      <p>企业事实、你的陈述、模型判断和确定性运行结果分别标记，不混成无来源事实。</p>
     </div>
   </div>
 </div>
