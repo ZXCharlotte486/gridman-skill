@@ -96,6 +96,12 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
 .card h3{font-size:var(--fs-body);font-weight:600;color:var(--text-body);margin-bottom:var(--sp-2)}
 
 /* ===== 6. 首页 ===== */
+/* 左标签栏 */
+.home-tab{display:flex;align-items:center;gap:var(--sp-2);border:0;border-left:var(--rail) solid transparent;border-radius:0 var(--r-md) var(--r-md) 0;padding:var(--sp-2) var(--sp-4) var(--sp-2) var(--sp-3);background:transparent;color:var(--text-secondary);font-size:var(--fs-small);font-weight:600;text-align:left;cursor:pointer;white-space:nowrap;transition:color var(--dur-press) var(--ease-out)}
+.home-tab i{font-style:normal;font-size:var(--fs-body);width:20px;display:inline-block}
+.home-tab.active{border-left-color:var(--accent);color:var(--text);font-weight:700}
+@media(hover:hover)and (pointer:fine){.home-tab:not(.active):hover{color:var(--text-body)}}
+
 .alert-slab{background:var(--slab-bg);border:1px solid var(--slab-border);border-radius:var(--r-lg);padding:var(--sp-5);display:flex;justify-content:space-between;align-items:center;gap:var(--sp-5)}
 .alert-slab .count{font-size:var(--fs-metric);font-weight:700;color:var(--text);font-family:var(--font-mono)}
 .alert-slab .desc{font-size:var(--fs-small);color:var(--slab-fg);margin-top:var(--sp-1)}
@@ -291,32 +297,52 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 <main>
 <div id="mode-bar" class="strip"></div>
 
-<!-- ===== 首页（还原0.1.0布局） ===== -->
+<!-- ===== 首页（还原0.1.0布局：左标签栏+右内容区） ===== -->
 <div class="page active" id="page-home">
   <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>首页</h1><p>有没有出事、下一步做什么，以及接入与使用文档。</p></div>
-  <div class="scroll">
-    <!-- Alert 横幅 -->
-    <div class="alert-slab" id="home-alert">
-      <div><div class="count" id="alert-num">—</div><div class="desc" id="alert-desc">加载数据后显示状态。</div></div>
-      <button onclick="navTo('knowledge')">查看知识空间</button>
+  <div style="flex:1;display:grid;grid-template-columns:auto 1fr;gap:var(--sp-5);min-height:0">
+    <!-- 左标签栏 -->
+    <div style="display:flex;flex-direction:column;gap:var(--sp-1);padding-top:var(--sp-2)">
+      <button class="home-tab active" data-htab="overview" onclick="switchHomeTab('overview')"><i>◈</i>概览</button>
+      <button class="home-tab" data-htab="guide" onclick="switchHomeTab('guide')"><i>⇌</i>接入指南</button>
+      <button class="home-tab" data-htab="manual" onclick="switchHomeTab('manual')"><i>☰</i>使用手册</button>
     </div>
-    <!-- 三张卡片 -->
-    <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
-      <div class="m-card"><span>01</span><b id="h-runs">0</b><small>运行记录</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">尚无确定性运行结果</p></div>
-      <div class="m-card"><span>02</span><b>未执行</b><small>证据验证</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">纯数据读取动作，打开页面不产生动作。到运行证据页面查阅「验证可区」。</p></div>
-      <div class="m-card"><span>03</span><b>MCP · CLI</b><small>本机接入通路</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">Console 不记录接入端子历史。所以这里展「开放了哪些通路」，不展「谁连上了」。</p></div>
-    </div>
-    <!-- 知识与资产 -->
-    <h3 style="font-size:var(--fs-small);color:var(--text-muted);margin-top:var(--sp-4);margin-bottom:var(--sp-3)">知识与资产</h3>
-    <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
-      <div class="m-card"><span>可检索知识</span><b id="h-docs">—</b><small id="h-mods">— 模块启用</small></div>
-      <div class="m-card"><span>Mind 记录</span><b id="h-mind">0</b><small>属于你，不属于适配包。卸载适配包也不会删除。</small></div>
-      <div class="m-card"><span>网络</span><b id="h-net">仅拉取知识</b><small>Console 不主动上传业务文件。网络仅用于从远程仓库拉取知识索引与正文。</small></div>
-    </div>
-    <!-- 底部说明 -->
-    <div class="note" style="margin-top:var(--sp-4)">
-      <strong>这个界面用来确认资产与状态，不是发起任务的地方</strong>
-      <p>任务在宿主（Kiro / DSH / Cursor）里发起。Console 展示本地资产和知识状态。</p>
+    <!-- 右内容区 -->
+    <div style="overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4);min-height:0;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent">
+      <!-- 概览 -->
+      <div id="htab-overview">
+        <!-- Alert 横幅 -->
+        <div class="alert-slab" id="home-alert" style="margin-bottom:var(--sp-4)">
+          <div><div class="count" id="alert-num">0</div><div class="desc" id="alert-desc">尚没有开始使用。满足首要件之后，古立特会打出计划自行特分析一份你收集的数据辅助，运行记录和审查结论出现在这里。接入步骤见左侧「接入指南」。</div></div>
+          <button onclick="navTo('evidence')">查看入站通</button>
+        </div>
+        <!-- 三张卡片 -->
+        <div class="metrics" style="grid-template-columns:repeat(3,1fr);margin-bottom:var(--sp-5)">
+          <div class="m-card"><span>01</span><b id="h-runs">0</b><small>运行记录</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">尚无确定性运行结果</p></div>
+          <div class="m-card"><span>02</span><b>未执行</b><small>证据验证</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">纯数据读取动作，打开页面不产生动作。到运行证据页面查阅「验证可区」。</p></div>
+          <div class="m-card"><span>03</span><b>MCP · CLI</b><small>本机接入通路</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">Console 不记录接入端子历史。所以这里展「开放了哪些通路」，不展「谁连上了」。</p></div>
+        </div>
+        <!-- 知识与资产 -->
+        <h3 style="font-size:var(--fs-small);color:var(--text-muted);margin-bottom:var(--sp-3)">知识与资产</h3>
+        <div class="metrics" style="grid-template-columns:repeat(3,1fr);margin-bottom:var(--sp-5)">
+          <div class="m-card"><span>可检索知识</span><b id="h-docs">—</b><small id="h-mods">— 模块启用</small></div>
+          <div class="m-card"><span>Mind 记录</span><b id="h-mind">0</b><small>属于你，不属于适配包。卸载适配包也不会删除。</small></div>
+          <div class="m-card"><span>网络</span><b id="h-net">仅拉取知识</b><small>Console 不主动上传业务文件。网络仅用于从远程仓库拉取知识索引与正文。</small></div>
+        </div>
+        <!-- 底部说明 -->
+        <div class="note">
+          <strong>这个界面用来确认资产、风险与状态</strong>
+          <p>不是发起任务的地方。任务在宿主（Kiro / DSH / Cursor）里发起，Console 只负责确认状态。</p>
+        </div>
+      </div>
+      <!-- 接入指南 -->
+      <div id="htab-guide" style="display:none">
+        <div class="card"><h2>接入指南</h2><p style="font-size:var(--fs-small);color:var(--text-secondary);line-height:1.7">1. 在宿主（Kiro / Cursor / DSH）中安装 Gridman Skill<br>2. 确保 manifest.json 中 Token 和 knowledge_source 已配置<br>3. Agent 启动后自动加载知识索引<br>4. 首次使用打开 Console 选择数据目录以缓存配置<br><br>Skill 公开仓库: github.com/ZXCharlotte486/gridman-skill</p></div>
+      </div>
+      <!-- 使用手册 -->
+      <div id="htab-manual" style="display:none">
+        <div class="card"><h2>使用手册</h2><p style="font-size:var(--fs-small);color:var(--text-secondary);line-height:1.7">• 知识空间 — 管理模块开关，查看知识文件清单<br>• 知识检索 — 客户端关键词检索，命中结果可预览正文<br>• Mind — 跨宿主专业资产（偏好/判断/证据索引）<br>• Evidence — 确定性运行的输入身份、参数、验收与哈希<br>• 设置 — 框架配置、主题、边界声明</p></div>
+      </div>
     </div>
   </div>
 </div>
@@ -513,6 +539,15 @@ function navTo(p) {
   document.querySelectorAll('.page').forEach(pg => pg.classList.toggle('active', pg.id === 'page-' + p));
 }
 document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => navTo(b.dataset.page)));
+
+/* ===== 首页标签切换 ===== */
+function switchHomeTab(tab) {
+  document.querySelectorAll('.home-tab').forEach(b => b.classList.toggle('active', b.dataset.htab === tab));
+  ['overview','guide','manual'].forEach(t => {
+    const el = document.getElementById('htab-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+}
 
 /* ===== 设置标签 ===== */
 document.getElementById('set-tabs').addEventListener('click', e => {
