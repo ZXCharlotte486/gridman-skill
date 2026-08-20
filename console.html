@@ -303,7 +303,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <!-- 三张卡片 -->
     <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
       <div class="m-card"><span>01</span><b id="h-runs">0</b><small>运行记录</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">尚无确定性运行结果</p></div>
-      <div class="m-card"><span>02</span><b>未执行</b><small>证据验证</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">纯数据是式动作，打开页面不产生动作。到运行证据页面查阅「验证可区」。</p></div>
+      <div class="m-card"><span>02</span><b>未执行</b><small>证据验证</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">纯数据读取动作，打开页面不产生动作。到运行证据页面查阅「验证可区」。</p></div>
       <div class="m-card"><span>03</span><b>MCP · CLI</b><small>本机接入通路</small><p style="margin-top:var(--sp-2);font-size:var(--fs-micro);color:var(--text-muted)">Console 不记录接入端子历史。所以这里展「开放了哪些通路」，不展「谁连上了」。</p></div>
     </div>
     <!-- 知识与资产 -->
@@ -311,7 +311,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
       <div class="m-card"><span>可检索知识</span><b id="h-docs">—</b><small id="h-mods">— 模块启用</small></div>
       <div class="m-card"><span>Mind 记录</span><b id="h-mind">0</b><small>属于你，不属于适配包。卸载适配包也不会删除。</small></div>
-      <div class="m-card"><span>网络</span><b id="h-net">未使用</b><small>Console 不主动上传业务文件。取决于模型上传与数据处理方式。</small></div>
+      <div class="m-card"><span>网络</span><b id="h-net">仅拉取知识</b><small>Console 不主动上传业务文件。网络仅用于从远程仓库拉取知识索引与正文。</small></div>
     </div>
     <!-- 底部说明 -->
     <div class="note" style="margin-top:var(--sp-4)">
@@ -469,11 +469,11 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       </div>
 
       <div id="set-about" class="set-panel" style="display:none">
-        <div class="card">
+        <div class="card" style="margin-bottom:var(--sp-4)">
           <h2>Gridman Console 0.2.0</h2>
           <p style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-4)">本地运行的管理面板。它是可替换的——删除 Console 不会删除你的 Mind 和 Evidence。</p>
         </div>
-        <div class="note"><strong>专业边界</strong><p>本工具提供专业知识指引与工作辅助，不构成正式审计意见、税务建议或法律意见。税率、文号、优惠期限以官方最新发布为准。</p></div>
+        <div class="note" style="margin-bottom:var(--sp-3)"><strong>专业边界</strong><p>本工具提供专业知识指引与工作辅助，不构成正式审计意见、税务建议或法律意见。税率、文号、优惠期限以官方最新发布为准。</p></div>
         <div class="note"><strong>Evidence 的诚实边界</strong><p>哈希证明文件身份和未被修改，不能证明业务结论正确。对外使用「可复核证据包」，不使用「绝对正确」「不可否认」。</p></div>
       </div>
     </div>
@@ -488,7 +488,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       </div>
       <div class="card">
         <h2 style="margin-bottom:var(--sp-3)">本机状态</h2>
-        <div class="set-row"><span class="k">网络</span><span class="v" style="color:var(--text-muted)">未使用</span></div>
+        <div class="set-row"><span class="k">网络</span><span class="v">仅拉取知识</span></div>
         <div class="set-row"><span class="k">数据目录可写</span><span class="v" id="rt-writable">—</span></div>
       </div>
     </div>
