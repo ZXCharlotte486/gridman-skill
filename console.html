@@ -5,125 +5,212 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gridman Console</title>
 <style>
-/* ===== 设计令牌 ===== */
-:root{--n-0:#fff;--n-1:#fafafa;--n-2:#f4f4f5;--n-3:#e9e9ec;--n-4:#d6d6da;--n-5:#a5a5ad;--n-6:#74747d;--n-7:#55555e;--n-8:#3d3d45;--n-9:#1a1a1e;--bg-page:var(--n-1);--bg-surface:var(--n-0);--bg-subtle:var(--n-2);--border:var(--n-3);--border-strong:var(--n-4);--text:var(--n-9);--text-body:var(--n-8);--text-secondary:var(--n-6);--text-muted:var(--n-5);--accent:var(--n-9);--accent-hover:var(--n-8);--accent-on:var(--n-0);--slab-bg:#eeeef1;--slab-fg:var(--n-8);--slab-border:var(--n-4);--pass-fg:#15703c;--pass-bg:#eef9f2;--pass-border:#bfe3cd;--exception-fg:#96580a;--exception-bg:#fdf6e9;--exception-border:#e8d3a6;--fail-fg:#a92a22;--fail-bg:#fdf1f0;--fail-border:#ecc4c0;--pending-fg:var(--n-7);--pending-bg:var(--n-2);--pending-border:var(--n-5);--font-sans:"Segoe UI Variable Text","Segoe UI","Microsoft YaHei UI",system-ui,sans-serif;--font-mono:"Cascadia Mono",Consolas,"Sarasa Mono SC",monospace;--fs-micro:11px;--fs-tiny:12px;--fs-small:13px;--fs-body:14px;--fs-lead:16px;--fs-h3:18px;--fs-h2:21px;--fs-h1:28px;--fs-metric:30px;--sp-05:2px;--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;--sp-8:32px;--r-sm:6px;--r-md:10px;--r-lg:14px;--r-pill:999px;--rail:2px;--shadow-sm:0 1px 2px rgba(20,20,24,.05);--shadow-md:0 2px 8px rgba(20,20,24,.07);--dur-press:140ms;--dur-switch:180ms;--ease-out:cubic-bezier(.23,1,.32,1);font-family:var(--font-sans);font-size:var(--fs-body);color:var(--text-body)}
-:root[data-theme='dark']{--n-0:#1b1b1f;--n-1:#121215;--n-2:#242429;--n-3:#303036;--n-4:#3e3e46;--n-5:#6e6e78;--n-6:#9a9aa4;--n-7:#bdbdc5;--n-8:#dededf;--n-9:#f7f7f8;--bg-page:var(--n-1);--bg-surface:var(--n-0);--bg-subtle:var(--n-2);--border:var(--n-3);--border-strong:var(--n-4);--accent:var(--n-9);--accent-hover:var(--n-8);--accent-on:var(--n-1);--slab-bg:#26262c;--slab-fg:var(--n-8);--slab-border:#3a3a42;--pass-fg:#5fd08b;--pass-bg:#12251a;--pass-border:#245c39;--exception-fg:#e5b155;--exception-bg:#271e0d;--exception-border:#5f4718;--fail-fg:#f08a83;--fail-bg:#2a1615;--fail-border:#6b2a26;--pending-fg:var(--n-7);--pending-bg:var(--n-2);--pending-border:var(--n-5);--shadow-sm:0 1px 2px rgba(0,0,0,.4);--shadow-md:0 2px 10px rgba(0,0,0,.5)}
-*{box-sizing:border-box;margin:0;padding:0}html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-page)}button,input{font:inherit}code,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+/* ===== 1. 设计令牌 ===== */
+:root {
+  --n-0:#fff;--n-1:#fafafa;--n-2:#f4f4f5;--n-3:#e9e9ec;--n-4:#d6d6da;
+  --n-5:#a5a5ad;--n-6:#74747d;--n-7:#55555e;--n-8:#3d3d45;--n-9:#1a1a1e;
+  --bg-page:var(--n-1);--bg-surface:var(--n-0);--bg-subtle:var(--n-2);
+  --border:var(--n-3);--border-strong:var(--n-4);
+  --text:var(--n-9);--text-body:var(--n-8);--text-secondary:var(--n-6);--text-muted:var(--n-5);
+  --accent:var(--n-9);--accent-hover:var(--n-8);--accent-on:var(--n-0);
+  --slab-bg:#eeeef1;--slab-fg:var(--n-8);--slab-border:var(--n-4);
+  --pass-fg:#15703c;--pass-bg:#eef9f2;--pass-border:#bfe3cd;
+  --exception-fg:#96580a;--exception-bg:#fdf6e9;--exception-border:#e8d3a6;
+  --fail-fg:#a92a22;--fail-bg:#fdf1f0;--fail-border:#ecc4c0;
+  --pending-fg:var(--n-7);--pending-bg:var(--n-2);--pending-border:var(--n-5);
+  --font-sans:"Segoe UI Variable Text","Segoe UI","Microsoft YaHei UI",system-ui,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,"Sarasa Mono SC",monospace;
+  --fs-micro:11px;--fs-tiny:12px;--fs-small:13px;--fs-body:14px;
+  --fs-lead:16px;--fs-h3:18px;--fs-h2:21px;--fs-h1:28px;--fs-metric:30px;
+  --sp-05:2px;--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;--sp-8:32px;
+  --r-sm:6px;--r-md:10px;--r-lg:14px;--r-pill:999px;
+  --rail:2px;
+  --shadow-sm:0 1px 2px rgba(20,20,24,.05);
+  --shadow-md:0 2px 8px rgba(20,20,24,.07);
+  --dur-press:140ms;--dur-switch:180ms;--dur-page:200ms;
+  --ease-out:cubic-bezier(.23,1,.32,1);
+  --ease-in-out:cubic-bezier(.77,0,.175,1);
+  font-family:var(--font-sans);font-size:var(--fs-body);color:var(--text-body)
+}
+:root[data-theme='dark'] {
+  --n-0:#1b1b1f;--n-1:#121215;--n-2:#242429;--n-3:#303036;--n-4:#3e3e46;
+  --n-5:#6e6e78;--n-6:#9a9aa4;--n-7:#bdbdc5;--n-8:#dededf;--n-9:#f7f7f8;
+  --bg-page:var(--n-1);--bg-surface:var(--n-0);--bg-subtle:var(--n-2);
+  --border:var(--n-3);--border-strong:var(--n-4);
+  --accent:var(--n-9);--accent-hover:var(--n-8);--accent-on:var(--n-1);
+  --slab-bg:#26262c;--slab-fg:var(--n-8);--slab-border:#3a3a42;
+  --pass-fg:#5fd08b;--pass-bg:#12251a;--pass-border:#245c39;
+  --exception-fg:#e5b155;--exception-bg:#271e0d;--exception-border:#5f4718;
+  --fail-fg:#f08a83;--fail-bg:#2a1615;--fail-border:#6b2a26;
+  --pending-fg:var(--n-7);--pending-bg:var(--n-2);--pending-border:var(--n-5);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);--shadow-md:0 2px 10px rgba(0,0,0,.5)
+}
 
-/* ===== 布局 ===== */
+/* ===== 2. 重置 ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-page)}
+button,input{font:inherit}
+code,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* ===== 3. 布局骨架 ===== */
 .app{height:100vh;display:grid;grid-template-columns:200px minmax(0,1fr)}
+
+/* 主区域：固定 viewport 高度，内部 flex 纵向排列 */
 main{height:100vh;overflow:hidden;padding:var(--sp-6) var(--sp-8);display:flex;flex-direction:column}
+
+/* 页面头部固定 */
 .page-head{flex:0 0 auto;padding-bottom:var(--sp-4);border-bottom:1px solid var(--border);margin-bottom:var(--sp-4)}
 .page-head small{display:block;color:var(--text-muted);font-size:var(--fs-micro);font-weight:700;letter-spacing:.09em;text-transform:uppercase}
-.page-head h1{font-size:var(--fs-h1);font-weight:700;color:var(--text);letter-spacing:-.015em;margin:var(--sp-1) 0 0}
+.page-head h1{font-size:var(--fs-h1);font-weight:700;color:var(--text);letter-spacing:-.015em;margin:var(--sp-1) 0 0;line-height:1.1}
 .page-head p{color:var(--text-secondary);font-size:var(--fs-small);margin-top:var(--sp-1)}
-.scroll{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:var(--sp-4)}
 
-/* ===== 侧栏 ===== */
-aside{padding:var(--sp-6) var(--sp-3);border-right:1px solid var(--border);background:var(--bg-surface);display:flex;flex-direction:column}
+/* 页面内容区：flex:1 占满剩余空间，overflow:hidden 防止溢出 */
+.page{display:none;flex:1;flex-direction:column;min-height:0}
+.page.active{display:flex}
+
+/* 滚动容器 — 仅在面板内部滚动 */
+.scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4);min-height:0;
+  scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
+.scroll::-webkit-scrollbar{width:6px}
+.scroll::-webkit-scrollbar-thumb{border-radius:var(--r-pill);background:var(--border-strong)}
+
+/* ===== 4. 侧栏 ===== */
+aside{padding:var(--sp-6) var(--sp-3);border-right:1px solid var(--border);background:var(--bg-surface);display:flex;flex-direction:column;overflow:hidden}
 .brand{display:flex;gap:var(--sp-3);align-items:center;padding:0 var(--sp-2) var(--sp-6)}
 .brand b{display:grid;place-items:center;width:40px;height:40px;border-radius:var(--r-md);background:var(--accent);color:var(--accent-on);font-size:var(--fs-h3);font-weight:700}
 .brand strong{display:block;color:var(--text);font-size:var(--fs-lead)}
 .brand small{display:block;margin-top:var(--sp-05);color:var(--text-muted);font-size:var(--fs-tiny)}
 nav{display:grid;gap:var(--sp-05);flex:1;align-content:start}
-nav button{display:flex;align-items:center;border:0;border-radius:var(--r-md);padding:var(--sp-3);background:transparent;color:var(--text-secondary);font-size:var(--fs-body);font-weight:600;text-align:left;cursor:pointer;transition:background var(--dur-press) var(--ease-out)}
+nav button{display:flex;align-items:center;border:0;border-radius:var(--r-md);padding:var(--sp-3);background:transparent;color:var(--text-secondary);font-size:var(--fs-body);font-weight:600;text-align:left;cursor:pointer;transition:background var(--dur-press) var(--ease-out),color var(--dur-press) var(--ease-out)}
 nav button i{display:inline-block;width:28px;font-style:normal;font-size:var(--fs-lead)}
-nav button:hover{background:var(--bg-subtle);color:var(--text-body)}
+nav button:active{transform:scale(.97)}
+@media(hover:hover)and (pointer:fine){nav button:hover{background:var(--bg-subtle);color:var(--text-body)}}
 nav button.active{position:relative;background:var(--bg-subtle);color:var(--text);font-weight:700}
 nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bottom:var(--sp-2);width:var(--rail);border-radius:var(--r-pill);background:var(--accent)}
 .aside-foot{margin-top:auto;padding:var(--sp-4) var(--sp-3);border-top:1px solid var(--border);font-size:var(--fs-tiny);color:var(--text-muted);display:flex;flex-direction:column;gap:var(--sp-2)}
-.aside-foot .dot{display:inline-block;width:6px;height:6px;margin-right:var(--sp-2);border-radius:50%;background:var(--pass-fg)}
+.aside-foot .dot{display:inline-block;width:6px;height:6px;margin-right:var(--sp-2);border-radius:50%;background:var(--text-muted)}
 
-/* ===== 卡片 ===== */
+/* ===== 5. 卡片 ===== */
 .card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-5);box-shadow:var(--shadow-sm)}
-.card h2{font-size:var(--fs-lead);font-weight:700;color:var(--text);margin-bottom:var(--sp-4)}
+.card h2{font-size:var(--fs-lead);font-weight:700;color:var(--text);margin-bottom:var(--sp-3)}
 .card h3{font-size:var(--fs-body);font-weight:600;color:var(--text-body);margin-bottom:var(--sp-2)}
 
-/* ===== alert 面板（首页） ===== */
+/* ===== 6. 首页 ===== */
 .alert-slab{background:var(--slab-bg);border:1px solid var(--slab-border);border-radius:var(--r-lg);padding:var(--sp-5);display:flex;justify-content:space-between;align-items:center;gap:var(--sp-5)}
 .alert-slab .count{font-size:var(--fs-metric);font-weight:700;color:var(--text);font-family:var(--font-mono)}
 .alert-slab .desc{font-size:var(--fs-small);color:var(--slab-fg);margin-top:var(--sp-1)}
 .alert-slab.has-alert{border-color:var(--exception-border);background:var(--exception-bg)}
 .alert-slab.has-alert .count{color:var(--exception-fg)}
-.alert-slab button{border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-4);background:var(--bg-surface);color:var(--text-body);font-size:var(--fs-small);font-weight:600;cursor:pointer}
+.alert-slab button{border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-4);background:var(--bg-surface);color:var(--text-body);font-size:var(--fs-small);font-weight:600;cursor:pointer;transition:border-color var(--dur-press) var(--ease-out)}
+.alert-slab button:active{transform:scale(.97)}
+@media(hover:hover)and (pointer:fine){.alert-slab button:hover{border-color:var(--border-strong)}}
 
-/* ===== 指标网格 ===== */
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--sp-4)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--sp-4)}
 .m-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-5)}
 .m-card span{font-size:var(--fs-micro);color:var(--text-muted);text-transform:uppercase;letter-spacing:.09em;font-weight:700}
 .m-card b{display:block;font-size:var(--fs-h2);font-weight:700;color:var(--text);font-family:var(--font-mono);margin-top:var(--sp-1)}
 .m-card small{display:block;font-size:var(--fs-tiny);color:var(--text-muted);margin-top:var(--sp-1)}
 
-/* ===== 双栏 ===== */
-.two-col{display:grid;grid-template-columns:1fr 260px;gap:var(--sp-4);flex:1;min-height:0;overflow:hidden}
-.two-col .main{overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4)}
-.two-col .side{overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4)}
+/* ===== 7. 知识空间 — 三栏布局：左模块 / 右上统计+右下文件 ===== */
+.know-layout{flex:1;display:grid;grid-template-columns:1fr 300px;gap:var(--sp-4);min-height:0}
+.know-main{min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4);
+  scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent;padding-right:var(--sp-2)}
+.know-main::-webkit-scrollbar{width:6px}
+.know-main::-webkit-scrollbar-thumb{border-radius:var(--r-pill);background:var(--border-strong)}
+.know-side{min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4);
+  scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
+.know-side::-webkit-scrollbar{width:6px}
+.know-side::-webkit-scrollbar-thumb{border-radius:var(--r-pill);background:var(--border-strong)}
+
+/* 侧边统计小卡 */
 .side-box{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-4)}
 .side-box .big{font-size:var(--fs-h2);font-weight:700;color:var(--text);font-family:var(--font-mono)}
 .side-box .lbl{font-size:var(--fs-tiny);color:var(--text-muted);margin-top:var(--sp-05)}
 .bar{height:4px;background:var(--bg-subtle);border-radius:var(--r-pill);margin-top:var(--sp-2);overflow:hidden}
 .bar i{display:block;height:100%;background:var(--accent);border-radius:var(--r-pill);transition:width .3s var(--ease-out)}
 
-/* ===== 模块行 ===== */
+/* ===== 8. 模块行 ===== */
 .mod-list{display:flex;flex-direction:column}
 .mod-row{display:flex;justify-content:space-between;align-items:center;padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--border);transition:background var(--dur-press) var(--ease-out)}
 .mod-row:last-child{border-bottom:none}
-.mod-row:hover{background:var(--bg-subtle)}
+@media(hover:hover)and (pointer:fine){.mod-row:hover{background:var(--bg-subtle)}}
 .mod-row .info b{display:block;color:var(--text-body);font-size:var(--fs-small);font-weight:600}
 .mod-row .info small{color:var(--text-muted);font-size:var(--fs-tiny)}
 .mod-row.off .info b{color:var(--text-muted)}
+
 /* 开关 */
 .sw{position:relative;width:36px;height:20px;border:0;border-radius:var(--r-pill);background:var(--n-4);cursor:pointer;transition:background var(--dur-switch) var(--ease-out);flex-shrink:0}
 .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--bg-surface);box-shadow:var(--shadow-sm);transition:transform var(--dur-switch) var(--ease-out)}
 .sw.on{background:var(--accent)}
 .sw.on::after{transform:translateX(16px)}
+.sw:active{transform:scale(.95)}
 
-/* ===== 标签条 ===== */
+/* ===== 9. 检索页 ===== */
+.search-layout{flex:1;display:flex;flex-direction:column;gap:var(--sp-4);min-height:0}
+.search-bar{display:flex;gap:var(--sp-3)}
+.search-bar input{flex:1;padding:var(--sp-3) var(--sp-4);border:1px solid var(--border);border-radius:var(--r-md);background:var(--bg-subtle);color:var(--text-body);font-size:var(--fs-body);outline:none;transition:border-color var(--dur-press) var(--ease-out)}
+.search-bar input:focus{border-color:var(--accent)}
+.search-bar button{border:1px solid var(--accent);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-5);background:var(--accent);color:var(--accent-on);font-size:var(--fs-small);font-weight:600;cursor:pointer;transition:transform var(--dur-press) var(--ease-out)}
+.search-bar button:active{transform:scale(.97)}
+.search-results{flex:1;overflow-y:auto;min-height:0;
+  scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
+.search-results::-webkit-scrollbar{width:6px}
+.search-results::-webkit-scrollbar-thumb{border-radius:var(--r-pill);background:var(--border-strong)}
+
+/* ===== 10. 标签条 ===== */
 .tabs{display:flex;gap:var(--sp-05);margin-bottom:var(--sp-4)}
-.tabs button{border:0;border-radius:var(--r-md);padding:var(--sp-2) var(--sp-3);background:transparent;color:var(--text-secondary);font-size:var(--fs-small);font-weight:600;cursor:pointer}
+.tabs button{border:0;border-radius:var(--r-md);padding:var(--sp-2) var(--sp-3);background:transparent;color:var(--text-secondary);font-size:var(--fs-small);font-weight:600;cursor:pointer;transition:background var(--dur-press) var(--ease-out),color var(--dur-press) var(--ease-out)}
+.tabs button:active{transform:scale(.97)}
 .tabs button.active{background:var(--bg-subtle);color:var(--text)}
 
-/* ===== 记录列表 ===== */
+/* ===== 11. 记录列表 ===== */
 .rec{padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--border);font-size:var(--fs-small);display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background var(--dur-press) var(--ease-out)}
-.rec:hover{background:var(--bg-subtle)}
+@media(hover:hover)and (pointer:fine){.rec:hover{background:var(--bg-subtle)}}
 .rec:last-child{border-bottom:none}
 .rec b{color:var(--text-body);font-weight:600}
 .rec .meta{color:var(--text-muted);font-size:var(--fs-tiny)}
-.rec code{font-size:var(--fs-micro);color:var(--text-muted)}
 
-/* ===== 设置行 ===== */
+/* ===== 12. 设置行 ===== */
 .set-row{display:flex;justify-content:space-between;align-items:center;padding:var(--sp-3) 0;border-bottom:1px solid var(--border)}
 .set-row:last-child{border-bottom:none}
 .set-row .k{color:var(--text-secondary);font-size:var(--fs-small)}
 .set-row .v{color:var(--text-body);font-family:var(--font-mono);font-size:var(--fs-small)}
 
-/* ===== 空 ===== */
+/* ===== 13. 空态 ===== */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--sp-8);color:var(--text-muted);text-align:center;gap:var(--sp-3)}
 .empty .ic{font-size:var(--fs-h1);opacity:.4}
 .empty h2{font-size:var(--fs-lead);color:var(--text-secondary);font-weight:600}
 .empty p{font-size:var(--fs-small);max-width:300px}
 
-/* ===== 通知条 ===== */
-.strip{background:var(--slab-bg);border:1px solid var(--slab-border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-4);font-size:var(--fs-tiny);color:var(--slab-fg);display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-4)}
+/* ===== 14. 通知条 ===== */
+.strip{background:var(--slab-bg);border:1px solid var(--slab-border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-4);font-size:var(--fs-tiny);color:var(--slab-fg);display:flex;align-items:center;gap:var(--sp-3);flex:0 0 auto;margin-bottom:var(--sp-4)}
 .strip .btn{border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-1) var(--sp-3);background:var(--bg-surface);color:var(--text-body);font-size:var(--fs-tiny);font-weight:600;cursor:pointer}
+.strip .btn:active{transform:scale(.97)}
 
-/* ===== 注释卡 ===== */
+/* ===== 15. 注释卡 ===== */
 .note{background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-4);font-size:var(--fs-small);color:var(--text-secondary);line-height:1.6}
 .note strong{display:block;color:var(--text-body);margin-bottom:var(--sp-1)}
 .note p{margin-top:var(--sp-2)}
 
-/* ===== 徽章 ===== */
+/* ===== 16. 徽章 ===== */
 .badge{font-size:var(--fs-micro);font-weight:700;padding:var(--sp-1) var(--sp-2);border-radius:var(--r-sm)}
 .badge-ok{background:var(--pass-bg);color:var(--pass-fg);border:1px solid var(--pass-border)}
 .badge-warn{background:var(--exception-bg);color:var(--exception-fg);border:1px solid var(--exception-border)}
 .badge-muted{background:var(--bg-subtle);color:var(--text-muted);border:1px solid var(--border)}
 
-/* ===== 页面切换 ===== */
-.page{display:none;flex:1;flex-direction:column}
-.page.active{display:flex}
+/* ===== 17. 动效与可访问性 ===== */
+@media(prefers-reduced-motion:reduce){
+  *{transition-duration:0ms!important;animation-duration:0ms!important}
+}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* ===== 响应式 ===== */
-@media(max-width:720px){.app{grid-template-columns:1fr}aside{display:none}main{padding:var(--sp-4)}.two-col{grid-template-columns:1fr}}
+/* ===== 18. 响应式 ===== */
+@media(max-width:720px){
+  .app{grid-template-columns:1fr}
+  aside{display:none}
+  main{padding:var(--sp-4)}
+  .know-layout{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -172,22 +259,26 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
 <!-- ===== 知识空间 ===== -->
 <div class="page" id="page-knowledge">
   <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>知识空间</h1><p>启停模块。被关闭的模块不参与检索，古立特读不到。</p></div>
-  <div class="scroll">
-    <div class="two-col">
-      <div class="main">
-        <div class="card" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
-          <h2>模块</h2>
-          <div class="mod-list" id="mod-list" style="flex:1;overflow-y:auto"></div>
-        </div>
+  <div class="know-layout">
+    <!-- 左栏：模块列表 -->
+    <div class="know-main">
+      <div class="card">
+        <h2>模块</h2>
+        <div class="mod-list" id="mod-list"></div>
       </div>
-      <div class="side">
-        <div class="side-box"><div class="big" id="k-docs">—</div><div class="lbl">可检索文件</div></div>
-        <div class="side-box"><div class="big" id="k-mods">—</div><div class="lbl">启用 / 总模块</div><div class="bar"><i id="k-bar" style="width:0%"></i></div></div>
-        <div class="side-box"><div class="big" id="k-ver">0.2.0</div><div class="lbl">知识版本</div></div>
-        <div class="card" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0">
-          <h3 style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-2)">知识文件</h3>
-          <div id="file-list" style="flex:1;overflow-y:auto;font-size:var(--fs-tiny)"></div>
-        </div>
+      <div class="note">
+        <strong>模块开关是硬边界</strong>
+        <p>关闭后该模块知识不参与检索。宿主不能自行打开——Skill 铁律保证。</p>
+      </div>
+    </div>
+    <!-- 右栏：统计 + 知识文件列表 -->
+    <div class="know-side">
+      <div class="side-box"><div class="big" id="k-docs">—</div><div class="lbl">可检索文件</div></div>
+      <div class="side-box"><div class="big" id="k-mods">—</div><div class="lbl">启用 / 总模块</div><div class="bar"><i id="k-bar" style="width:0%"></i></div></div>
+      <div class="side-box"><div class="big" id="k-ver">0.2.0</div><div class="lbl">知识版本</div></div>
+      <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+        <h2>知识文件</h2>
+        <div id="file-list" style="flex:1;overflow-y:auto;min-height:0;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent"></div>
       </div>
     </div>
   </div>
@@ -196,18 +287,16 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
 <!-- ===== 知识检索 ===== -->
 <div class="page" id="page-search">
   <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>知识检索</h1><p>只检索已启用的模块。被关闭的模块不参与检索，古立特也读不到。</p></div>
-  <div class="scroll">
-    <div class="card">
-      <form id="search-form" style="display:flex;gap:var(--sp-3);margin-bottom:var(--sp-4)">
-        <input id="search-input" type="text" placeholder="用一句话提问，例如：应收账款账龄怎么分段" style="flex:1;padding:var(--sp-3) var(--sp-4);border:1px solid var(--border);border-radius:var(--r-md);background:var(--bg-subtle);color:var(--text-body);font-size:var(--fs-body);outline:none" />
-        <button type="submit" style="border:1px solid var(--accent);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-5);background:var(--accent);color:var(--accent-on);font-size:var(--fs-small);font-weight:600;cursor:pointer">检索</button>
-      </form>
-      <div id="search-scope" style="font-size:var(--fs-tiny);color:var(--text-muted);margin-bottom:var(--sp-4)"></div>
-      <div id="search-results">
-        <div class="empty"><span class="ic">⌕</span><h2>还没有检索</h2><p>输入关键词匹配 index.json 中的 keywords 和 alias。检索只覆盖已启用模块。</p></div>
-      </div>
+  <div class="search-layout">
+    <form id="search-form" class="search-bar">
+      <input id="search-input" type="text" placeholder="用一句话提问，例如：应收账款账龄怎么分段" />
+      <button type="submit">检索</button>
+    </form>
+    <div id="search-scope" style="font-size:var(--fs-tiny);color:var(--text-muted)"></div>
+    <div id="search-results" class="search-results">
+      <div class="empty"><span class="ic">⌕</span><h2>还没有检索</h2><p>输入关键词匹配 index.json 中的 keywords 和 alias。检索只覆盖已启用模块。</p></div>
     </div>
-    <div class="note">
+    <div class="note" style="flex:0 0 auto">
       <strong>检索范围 = 已启用模块</strong>
       <p>关闭的模块不参与检索。如果搜不到，确认相关模块是否被关闭（在知识空间页查看）。</p>
     </div>
@@ -218,7 +307,7 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
 <div class="page" id="page-mind">
   <div class="page-head"><small>GRIDMAN CONSOLE</small><h1>Mind</h1><p>跨宿主的专业资产与偏好。属于你，不属于 Skill。卸载适配包不会删除。</p></div>
   <div class="scroll">
-    <div class="card" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+    <div class="card">
       <h2>专业资产</h2>
       <div class="tabs" id="mind-tabs">
         <button class="active" data-cls="all">全部</button>
@@ -226,9 +315,17 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
         <button data-cls="judgment">判断</button>
         <button data-cls="evidence">证据索引</button>
       </div>
-      <div id="mind-body" style="flex:1;overflow-y:auto">
+      <div id="mind-body">
         <div class="empty"><span class="ic">◇</span><h2>暂无 Mind 记录</h2><p>在 Agent 中确认专业判断后，会存入 Mind。换宿主也不会丢。</p></div>
       </div>
+    </div>
+    <div class="note">
+      <strong>写入只有一条通道</strong>
+      <p>宿主不能直接改写正式资产。它只能把变化提交到候选区，由你看过差异和影响范围后接受或拒绝。</p>
+    </div>
+    <div class="note">
+      <strong>来源必须分得清</strong>
+      <p>企业事实、你的陈述、模型判断和确定性运行结果分别标记，不混成无来源事实。</p>
     </div>
   </div>
 </div>
@@ -291,334 +388,421 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
 </div>
 
 <script>
+/* ===== 工具函数：UTF-8 安全的 Base64 解码 ===== */
+function decodeBase64UTF8(base64) {
+  const raw = atob(base64.replace(/\n/g, ''));
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
+}
+
 /* ===== 导航 ===== */
-function navTo(p){document.querySelectorAll('nav button').forEach(b=>{b.classList.toggle('active',b.dataset.page===p)});document.querySelectorAll('.page').forEach(pg=>pg.classList.toggle('active',pg.id==='page-'+p))}
-document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>navTo(b.dataset.page)));
+function navTo(p) {
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.page === p));
+  document.querySelectorAll('.page').forEach(pg => pg.classList.toggle('active', pg.id === 'page-' + p));
+}
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => navTo(b.dataset.page)));
 
 /* ===== 设置标签 ===== */
-document.getElementById('set-tabs').addEventListener('click',e=>{
-  const btn=e.target.closest('button');if(!btn)return;
-  document.querySelectorAll('#set-tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  document.querySelectorAll('.set-panel').forEach(p=>p.style.display='none');
-  document.getElementById('set-'+btn.dataset.tab).style.display='block';
+document.getElementById('set-tabs').addEventListener('click', e => {
+  const btn = e.target.closest('button'); if (!btn) return;
+  document.querySelectorAll('#set-tabs button').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+  document.querySelectorAll('.set-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('set-' + btn.dataset.tab).style.display = 'block';
 });
 
-/* ===== Mind标签 ===== */
-document.getElementById('mind-tabs').addEventListener('click',e=>{
-  const btn=e.target.closest('button');if(!btn)return;
-  document.querySelectorAll('#mind-tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+/* ===== Mind 标签 ===== */
+document.getElementById('mind-tabs').addEventListener('click', e => {
+  const btn = e.target.closest('button'); if (!btn) return;
+  document.querySelectorAll('#mind-tabs button').forEach(b => b.classList.remove('active')); btn.classList.add('active');
 });
 
 /* ===== 主题 ===== */
-function setTheme(t){if(t==='system'){localStorage.removeItem('gridman.theme');t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}else{localStorage.setItem('gridman.theme',t)}document.documentElement.setAttribute('data-theme',t)}
-(function(){const s=localStorage.getItem('gridman.theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+function setTheme(t) {
+  if (t === 'system') {
+    localStorage.removeItem('gridman.theme');
+    t = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  } else {
+    localStorage.setItem('gridman.theme', t);
+  }
+  document.documentElement.setAttribute('data-theme', t);
+}
+(function() { const s = localStorage.getItem('gridman.theme'); if (s) document.documentElement.setAttribute('data-theme', s); })();
 
 /* ===== 数据加载 ===== */
-const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
-let dh=null;
-async function init(){
-  const bar=document.getElementById('mode-bar');
-  if(isLocal){bar.textContent='模式 A — localhost';await loadA()}
-  else{bar.innerHTML='模式 B — <button class="btn" onclick="pickDir()">选择数据目录</button>'}
-}
-async function pickDir(){
-  if(!('showDirectoryPicker' in window)){document.getElementById('mode-bar').textContent='需要 Chrome/Edge';return}
-  try{dh=await window.showDirectoryPicker();document.getElementById('mode-bar').textContent='模式 B — '+dh.name;await loadB()}catch(e){document.getElementById('mode-bar').textContent='取消: '+e.message}
-}
-async function loadA(){
-  try{const m=await(await fetch('/manifest.json')).json();render(m);await postInit()}catch(e){document.getElementById('mode-bar').textContent='失败: '+e.message}
-}
-async function loadB(){
-  try{const f=await(await dh.getFileHandle('manifest.json')).getFile();const m=JSON.parse(await f.text());render(m);await postInit()}catch(e){}
-}
-init();
-postInit();
+const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+let dh = null;
 
-function render(m){
-  const enabled=m.modules_enabled||[];
-  const all=['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
-  // 存全局变量供搜索用
-  window._manifest=m;
-  window._enabledModules=enabled;
-  // 首页
-  document.getElementById('h-docs').textContent='77';
-  document.getElementById('h-mods').textContent=enabled.length+' / '+all.length;
-  document.getElementById('alert-num').textContent=enabled.length;
-  document.getElementById('alert-desc').textContent='个模块已启用。知识源: '+(m.knowledge_source||'—');
-  // 知识空间
-  document.getElementById('k-docs').textContent='77';
-  document.getElementById('k-mods').textContent=enabled.length+' / '+all.length;
-  document.getElementById('k-ver').textContent=m.manifest_version||'0.2.0';
-  document.getElementById('k-bar').style.width=Math.round(enabled.length/all.length*100)+'%';
-  // 模块列表（带真实开关 + 中文标题 + 文档数）
-  // 先尝试加载 index.json 获取模块详情
-  loadKnowledgeIndex(m);
-  
-  // 设置
-  document.getElementById('cfg-list').innerHTML=[
-    ['根目录',m.root||'—'],['知识源',m.knowledge_source||'—'],['模式源',m.modes_source||'—'],
-    ['平台',m.platform||'—'],['Token',m.token?'••••••••':'未设置'],['版本',m.manifest_version||'0.2.0']
-  ].map(([k,v])=>'<div class="set-row"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>').join('');
+function cacheManifest(m) { try { localStorage.setItem('gridman.manifest', JSON.stringify(m)); } catch(e){} }
+function getCachedManifest() { try { const s = localStorage.getItem('gridman.manifest'); return s ? JSON.parse(s) : null; } catch(e){ return null; } }
+
+async function init() {
+  const bar = document.getElementById('mode-bar');
+  if (isLocal) {
+    bar.textContent = '模式 A — localhost';
+    await loadA();
+  } else {
+    // 模式B：先用缓存 manifest 直接连远程，不需要每次选目录
+    const cached = getCachedManifest();
+    if (cached && cached.token && cached.knowledge_source) {
+      bar.innerHTML = '远程知识已连接 · <button class="btn" onclick="pickDir()">选择本地目录(可选)</button>';
+      render(cached);
+      await postInit();
+    } else {
+      bar.innerHTML = '首次使用请 <button class="btn" onclick="pickDir()">选择数据目录</button> 加载 manifest.json';
+    }
+  }
 }
+
+async function pickDir() {
+  if (!('showDirectoryPicker' in window)) { document.getElementById('mode-bar').textContent = '需要 Chrome/Edge'; return; }
+  try {
+    dh = await window.showDirectoryPicker();
+    document.getElementById('mode-bar').textContent = '已连接 — ' + dh.name;
+    await loadB();
+  } catch (e) { document.getElementById('mode-bar').textContent = '取消: ' + e.message; }
+}
+
+async function loadA() {
+  try {
+    const m = await (await fetch('/manifest.json')).json();
+    cacheManifest(m);
+    render(m);
+    await postInit();
+  } catch (e) { document.getElementById('mode-bar').textContent = '失败: ' + e.message; }
+}
+
+async function loadB() {
+  try {
+    const f = await (await dh.getFileHandle('manifest.json')).getFile();
+    const m = JSON.parse(await f.text());
+    cacheManifest(m);
+    render(m);
+    await postInit();
+  } catch (e) {}
+}
+
+function render(m) {
+  const enabled = m.modules_enabled || [];
+  const all = ['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
+  window._manifest = m;
+  window._enabledModules = enabled;
+
+  // 首页
+  document.getElementById('h-docs').textContent = '—';
+  document.getElementById('h-mods').textContent = enabled.length + ' / ' + all.length;
+  document.getElementById('alert-num').textContent = enabled.length;
+  document.getElementById('alert-desc').textContent = '个模块已启用。知识源: ' + (m.knowledge_source || '—');
+
+  // 知识空间
+  document.getElementById('k-docs').textContent = '—';
+  document.getElementById('k-mods').textContent = enabled.length + ' / ' + all.length;
+  document.getElementById('k-ver').textContent = m.manifest_version || '0.2.0';
+  document.getElementById('k-bar').style.width = Math.round(enabled.length / all.length * 100) + '%';
+
+  loadKnowledgeIndex(m);
+
+  // 设置
+  document.getElementById('cfg-list').innerHTML = [
+    ['根目录', m.root || '—'], ['知识源', m.knowledge_source || '—'], ['模式源', m.modes_source || '—'],
+    ['平台', m.platform || '—'], ['Token', m.token ? '••••••••' : '未设置'], ['版本', m.manifest_version || '0.2.0']
+  ].map(([k, v]) => '<div class="set-row"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>').join('');
+}
+
 init();
 
 /* ===== 知识空间模块详情 ===== */
-async function loadKnowledgeIndex(m){
-  const enabled=m.modules_enabled||[];
-  const all=['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
-  
-  // 模块中文名映射
-  const titles={accounting:'会计与准则',audit:'审计与内控',tax:'税务',investment:'投行与估值',compliance:'合规与经济法',analysis:'财务与经营分析',specialized:'专项财务',academic:'学术与案例',sources:'官方来源入口'};
-  
-  let index=null;
-  
-  // 尝试拉远程 index.json
-  if(m.token && m.knowledge_source){
-    try{
-      const platform=m.platform||'github';
+async function loadKnowledgeIndex(m) {
+  const enabled = m.modules_enabled || [];
+  const all = ['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
+  const titles = {
+    accounting: '会计与准则', audit: '审计与内控', tax: '税务',
+    investment: '投行与估值', compliance: '合规与经济法', analysis: '财务与经营分析',
+    specialized: '专项财务', academic: '学术与案例', sources: '官方来源入口'
+  };
+
+  let index = null;
+
+  // 拉远程 index.json（使用 UTF-8 安全解码）
+  if (m.token && m.knowledge_source) {
+    try {
+      const platform = m.platform || 'github';
       let url;
-      if(platform==='gitee'){url='https://gitee.com/api/v5/repos/'+m.knowledge_source+'/contents/index.json?access_token='+m.token}
-      else{url='https://api.github.com/repos/'+m.knowledge_source+'/contents/index.json'}
-      const headers=platform==='github'?{'Authorization':'Bearer '+m.token,'Accept':'application/vnd.github.v3+json'}:{};
-      const res=await fetch(url,{headers});
-      if(res.ok){
-        const json=await res.json();
-        const content=atob(json.content.replace(/\n/g,''));
-        index=JSON.parse(content);
-        _indexData=index;// 供搜索用
+      if (platform === 'gitee') {
+        url = 'https://gitee.com/api/v5/repos/' + m.knowledge_source + '/contents/index.json?access_token=' + m.token;
+      } else {
+        url = 'https://api.github.com/repos/' + m.knowledge_source + '/contents/index.json';
       }
-    }catch(e){}
+      const headers = platform === 'github'
+        ? { 'Authorization': 'Bearer ' + m.token, 'Accept': 'application/vnd.github.v3+json' }
+        : {};
+      const res = await fetch(url, { headers });
+      if (res.ok) {
+        const json = await res.json();
+        // 关键修复：使用 TextDecoder 解码 UTF-8 Base64
+        const content = decodeBase64UTF8(json.content);
+        index = JSON.parse(content);
+        window._indexData = index;
+      }
+    } catch (e) { console.warn('知识索引加载失败:', e); }
   }
-  
+
   // 渲染模块列表
-  const modList=document.getElementById('mod-list');
-  modList.innerHTML=all.map(mod=>{
-    const on=enabled.includes(mod);
-    const title=titles[mod]||mod;
-    let docCount=0;
-    if(index){docCount=index.documents.filter(d=>d.module_id===mod).length}
-    const desc=docCount>0?docCount+' 个文件':'—';
-    return '<div class="mod-row'+(on?'':' off')+'">'
-      +'<div class="info"><b>'+title+'</b><small>'+mod+' · '+desc+(on?' · 已启用':' · 已关闭')+'</small></div>'
-      +'<button class="sw'+(on?' on':'')+'" data-mod="'+mod+'" aria-label="'+mod+'开关" onclick="toggleModule(\''+mod+'\')"></button>'
-      +'</div>';
+  const modList = document.getElementById('mod-list');
+  modList.innerHTML = all.map(mod => {
+    const on = enabled.includes(mod);
+    const title = titles[mod] || mod;
+    let docCount = 0;
+    if (index) docCount = index.documents.filter(d => d.module_id === mod).length;
+    const desc = docCount > 0 ? docCount + ' 个文件' : '—';
+    return '<div class="mod-row' + (on ? '' : ' off') + '">'
+      + '<div class="info"><b>' + title + '</b><small>' + mod + ' · ' + desc + (on ? ' · 已启用' : ' · 已关闭') + '</small></div>'
+      + '<button class="sw' + (on ? ' on' : '') + '" data-mod="' + mod + '" aria-label="' + title + '开关" onclick="toggleModule(\'' + mod + '\')"></button>'
+      + '</div>';
   }).join('');
-  
-  // 渲染文件列表（真实文件名）
-  const fileList=document.getElementById('file-list');
-  if(index&&index.documents.length>0){
-    const enabledDocs=index.documents.filter(d=>enabled.includes(d.module_id));
-    document.getElementById('k-docs').textContent=enabledDocs.length;
-    document.getElementById('h-docs').textContent=enabledDocs.length;
-    document.getElementById('side-docs')&&(document.getElementById('side-docs').textContent=enabledDocs.length);
-    fileList.innerHTML=enabledDocs.map(d=>
-      '<div class="rec"><div><b>'+d.title+'</b><br><code style="font-size:var(--fs-micro);color:var(--text-muted)">'+d.path+'</code></div><span class="meta">'+d.module_id+'</span></div>'
+
+  // 渲染文件列表（右侧栏）
+  const fileList = document.getElementById('file-list');
+  if (index && index.documents.length > 0) {
+    const enabledDocs = index.documents.filter(d => enabled.includes(d.module_id));
+    document.getElementById('k-docs').textContent = enabledDocs.length;
+    document.getElementById('h-docs').textContent = enabledDocs.length;
+    fileList.innerHTML = enabledDocs.map(d =>
+      '<div class="rec" style="flex-direction:column;align-items:flex-start;gap:var(--sp-1)">'
+      + '<b>' + d.title + '</b>'
+      + '<code style="font-size:var(--fs-micro);color:var(--text-muted)">' + d.path + '</code>'
+      + '</div>'
     ).join('');
-  }else{
-    fileList.innerHTML='<div class="empty"><span class="ic">▣</span><h2>无法加载知识索引</h2><p>检查 Token 和网络连接。</p></div>';
+  } else {
+    fileList.innerHTML = '<div class="empty"><span class="ic">▣</span><h2>无法加载知识索引</h2><p>检查 Token 和网络连接。</p></div>';
   }
 }
 
-/* ===== 模块开关（真实写入） ===== */
-async function toggleModule(mod){
-  const m=window._manifest;
-  if(!m)return;
-  let enabled=m.modules_enabled||[];
-  if(enabled.includes(mod)){enabled=enabled.filter(x=>x!==mod)}else{enabled.push(mod)}
-  m.modules_enabled=enabled;
-  window._enabledModules=enabled;
+/* ===== 模块开关 ===== */
+async function toggleModule(mod) {
+  const m = window._manifest;
+  if (!m) return;
+  let enabled = m.modules_enabled || [];
+  if (enabled.includes(mod)) { enabled = enabled.filter(x => x !== mod); }
+  else { enabled.push(mod); }
+  m.modules_enabled = enabled;
+  window._enabledModules = enabled;
 
-  // 模式 B: 有 dirHandle 可以直接写
-  if(dh){
-    try{
-      const handle=await dh.getFileHandle('manifest.json');
-      const writable=await handle.createWritable();
-      await writable.write(JSON.stringify(m,null,2));
+  if (dh) {
+    try {
+      const handle = await dh.getFileHandle('manifest.json');
+      const writable = await handle.createWritable();
+      await writable.write(JSON.stringify(m, null, 2));
       await writable.close();
       render(m);
-    }catch(e){alert('写入失败: '+e.message)}
+    } catch (e) { alert('写入失败: ' + e.message); }
     return;
   }
-  // 模式 A: localhost 只读，提示用户
-  if(isLocal){
-    render(m);// 先更新 UI
-    document.getElementById('mode-bar').innerHTML='<span style="color:var(--exception-fg)">⚠ 模块已在界面切换，但 localhost 模式无法写入 manifest.json。请让 Agent 执行: 修改 manifest.json 的 modules_enabled</span>';
+  if (isLocal) {
+    render(m);
+    document.getElementById('mode-bar').innerHTML = '<span style="color:var(--exception-fg)">⚠ 模块已在界面切换，但 localhost 模式无法写入 manifest.json。请让 Agent 执行修改。</span>';
     return;
   }
 }
 
 /* ===== 轻量 doctor 自检 ===== */
-async function runDoctor(){
-  const checks=[];
-  const m=window._manifest;
-  // 检查 manifest
-  if(m){checks.push({name:'manifest.json',pass:true,detail:'已加载'})}
-  else{checks.push({name:'manifest.json',pass:false,detail:'未找到'})}
-  // 检查 Token
-  if(m&&m.token){checks.push({name:'Token',pass:true,detail:'已配置'})}
-  else{checks.push({name:'Token',pass:false,detail:'未设置，无法访问远程知识'})}
-  // 检查模块
-  const enabled=(m&&m.modules_enabled)||[];
-  checks.push({name:'启用模块',pass:enabled.length>0,detail:enabled.length+' 个'});
-  // 检查模式文件（模式 B 下可检查）
-  if(dh){
-    try{
-      const modesDir=await dh.getDirectoryHandle(m.modes_dir||'modes');
-      let count=0;for await(const[n] of modesDir){if(n.endsWith('.md'))count++}
-      checks.push({name:'本地模式文件',pass:count>0,detail:count+' 个'});
-    }catch(e){checks.push({name:'本地模式文件',pass:false,detail:'modes/ 目录不存在'})}
+async function runDoctor() {
+  const checks = [];
+  const m = window._manifest;
+  if (m) { checks.push({ name: 'manifest.json', pass: true, detail: '已加载' }); }
+  else { checks.push({ name: 'manifest.json', pass: false, detail: '未找到' }); }
+  if (m && m.token) { checks.push({ name: 'Token', pass: true, detail: '已配置' }); }
+  else { checks.push({ name: 'Token', pass: false, detail: '未设置，无法访问远程知识' }); }
+  const enabled = (m && m.modules_enabled) || [];
+  checks.push({ name: '启用模块', pass: enabled.length > 0, detail: enabled.length + ' 个' });
+  if (dh) {
+    try {
+      const modesDir = await dh.getDirectoryHandle(m.modes_dir || 'modes');
+      let count = 0; for await (const [n] of modesDir) { if (n.endsWith('.md')) count++; }
+      checks.push({ name: '本地模式文件', pass: count > 0, detail: count + ' 个' });
+    } catch (e) { checks.push({ name: '本地模式文件', pass: false, detail: 'modes/ 目录不存在' }); }
   }
   return checks;
 }
 
-// 首页加载完后跑 doctor
-async function refreshDoctor(){
-  const checks=await runDoctor();
-  const failed=checks.filter(c=>!c.pass);
-  const el=document.getElementById('home-alert');
-  if(failed.length===0){
-    document.getElementById('alert-num').textContent='✓';
-    document.getElementById('alert-desc').textContent='自检通过。'+checks.length+' 项全部正常。';
+async function refreshDoctor() {
+  const checks = await runDoctor();
+  const failed = checks.filter(c => !c.pass);
+  const el = document.getElementById('home-alert');
+  if (failed.length === 0) {
+    document.getElementById('alert-num').textContent = '✓';
+    document.getElementById('alert-desc').textContent = '自检通过。' + checks.length + ' 项全部正常。';
     el.classList.remove('has-alert');
-  }else{
-    document.getElementById('alert-num').textContent=failed.length;
-    document.getElementById('alert-desc').textContent='项需要注意: '+failed.map(c=>c.name+' — '+c.detail).join('; ');
+  } else {
+    document.getElementById('alert-num').textContent = failed.length;
+    document.getElementById('alert-desc').textContent = '项需要注意: ' + failed.map(c => c.name + ' — ' + c.detail).join('; ');
     el.classList.add('has-alert');
   }
 }
 
 /* ===== Evidence 展示 ===== */
-async function loadEvidence(){
-  const body=document.getElementById('evi-body');
-  let files=[];
-  if(isLocal){
-    try{
-      const m=window._manifest;
-      const r=await fetch('/'+(m?.evidence_dir||'evidence')+'/');
-      if(r.ok){
-        const html=await r.text();
-        files=[...new DOMParser().parseFromString(html,'text/html').querySelectorAll('a')]
-          .map(a=>a.getAttribute('href')).filter(h=>h&&h.endsWith('.json')&&!h.startsWith('/'));
+async function loadEvidence() {
+  const body = document.getElementById('evi-body');
+  let files = [];
+  if (isLocal) {
+    try {
+      const m = window._manifest;
+      const r = await fetch('/' + (m?.evidence_dir || 'evidence') + '/');
+      if (r.ok) {
+        const html = await r.text();
+        files = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('a')]
+          .map(a => a.getAttribute('href')).filter(h => h && h.endsWith('.json') && !h.startsWith('/'));
       }
-    }catch(e){}
-  }else if(dh){
-    try{
-      const m=window._manifest;
-      const sub=await dh.getDirectoryHandle(m?.evidence_dir||'evidence');
-      for await(const[n] of sub){if(n.endsWith('.json'))files.push(n)}
-    }catch(e){}
+    } catch (e) {}
+  } else if (dh) {
+    try {
+      const m = window._manifest;
+      const sub = await dh.getDirectoryHandle(m?.evidence_dir || 'evidence');
+      for await (const [n] of sub) { if (n.endsWith('.json')) files.push(n); }
+    } catch (e) {}
   }
-  document.getElementById('h-evi').textContent=files.length;
-  if(files.length===0){
-    body.innerHTML='<div class="empty"><span class="ic">✓</span><h2>暂无 Evidence</h2><p>通过 Agent 执行确定性任务后，会在此留下可复核证据。</p></div>';
+  document.getElementById('h-evi').textContent = files.length;
+  if (files.length === 0) {
+    body.innerHTML = '<div class="empty"><span class="ic">✓</span><h2>暂无 Evidence</h2><p>通过 Agent 执行确定性任务后，会在此留下可复核证据。</p></div>';
     return;
   }
-  body.innerHTML='<div style="max-height:400px;overflow-y:auto">'+files.map(f=>
-    '<div class="rec"><b>'+f+'</b><code style="font-size:var(--fs-micro)">SHA-256 记录</code></div>'
-  ).join('')+'</div>';
+  body.innerHTML = files.map(f =>
+    '<div class="rec"><b>' + f.replace('.json', '') + '</b><span class="meta">SHA-256 记录</span></div>'
+  ).join('');
 }
 
 /* ===== Mind 展示 ===== */
-async function loadMind(){
-  const body=document.getElementById('mind-body');
-  let files=[];
-  if(isLocal){
-    try{
-      const m=window._manifest;
-      const r=await fetch('/'+(m?.mind_dir||'mind')+'/');
-      if(r.ok){
-        const html=await r.text();
-        files=[...new DOMParser().parseFromString(html,'text/html').querySelectorAll('a')]
-          .map(a=>a.getAttribute('href')).filter(h=>h&&h.endsWith('.json')&&!h.startsWith('/'));
+async function loadMind() {
+  const body = document.getElementById('mind-body');
+  let files = [];
+  if (isLocal) {
+    try {
+      const m = window._manifest;
+      const r = await fetch('/' + (m?.mind_dir || 'mind') + '/');
+      if (r.ok) {
+        const html = await r.text();
+        files = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('a')]
+          .map(a => a.getAttribute('href')).filter(h => h && h.endsWith('.json') && !h.startsWith('/'));
       }
-    }catch(e){}
-  }else if(dh){
-    try{
-      const m=window._manifest;
-      const sub=await dh.getDirectoryHandle(m?.mind_dir||'mind');
-      for await(const[n] of sub){if(n.endsWith('.json'))files.push(n)}
-    }catch(e){}
+    } catch (e) {}
+  } else if (dh) {
+    try {
+      const m = window._manifest;
+      const sub = await dh.getDirectoryHandle(m?.mind_dir || 'mind');
+      for await (const [n] of sub) { if (n.endsWith('.json')) files.push(n); }
+    } catch (e) {}
   }
-  document.getElementById('h-mind').textContent=files.length;
-  if(files.length===0){
-    body.innerHTML='<div class="empty"><span class="ic">◇</span><h2>暂无 Mind 记录</h2><p>在 Agent 中确认专业判断后，会存入 Mind。换宿主也不会丢。</p></div>';
+  document.getElementById('h-mind').textContent = files.length;
+  if (files.length === 0) {
+    body.innerHTML = '<div class="empty"><span class="ic">◇</span><h2>暂无 Mind 记录</h2><p>在 Agent 中确认专业判断后，会存入 Mind。换宿主也不会丢。</p></div>';
     return;
   }
-  body.innerHTML='<div style="max-height:400px;overflow-y:auto">'+files.map(f=>
-    '<div class="rec"><b>'+f.replace('.json','')+'</b><span class="meta">专业资产</span></div>'
-  ).join('')+'</div>';
+  body.innerHTML = files.map(f =>
+    '<div class="rec"><b>' + f.replace('.json', '') + '</b><span class="meta">专业资产</span></div>'
+  ).join('');
 }
 
-// 初始化后加载额外数据
-async function postInit(){
+async function postInit() {
   await loadMind();
   await loadEvidence();
   await refreshDoctor();
 }
 
 /* ===== 搜索 ===== */
-let _indexData=null;
-async function loadIndex(){
-  if(_indexData)return _indexData;
-  // 尝试从 localhost 或远程读 index.json
-  try{
-    if(isLocal){const r=await fetch('/index.json');if(r.ok){_indexData=await r.json();return _indexData}}
-    // 如果本地没有，尝试从 knowledge 源读取（需要 manifest 里的信息）
-    // 简化：先假设 index.json 在同目录
-  }catch(e){}
+let _indexData = null;
+async function loadIndex() {
+  // 优先用已从远程加载的数据（loadKnowledgeIndex 里已经拉过了）
+  if (_indexData) return _indexData;
+  // 降级：尝试 localhost
+  try {
+    if (isLocal) {
+      const r = await fetch('/index.json');
+      if (r.ok) { _indexData = await r.json(); return _indexData; }
+    }
+  } catch (e) {}
   // 降级：尝试 File System API
-  if(dh){try{const sub=await dh.getDirectoryHandle('knowledge');const f=await(await sub.getFileHandle('index.json')).getFile();_indexData=JSON.parse(await f.text());return _indexData}catch(e){}}
+  if (dh) {
+    try {
+      const sub = await dh.getDirectoryHandle('knowledge');
+      const f = await (await sub.getFileHandle('index.json')).getFile();
+      _indexData = JSON.parse(await f.text());
+      return _indexData;
+    } catch (e) {}
+  }
+  // 最后尝试：直接从远程拉（manifest 可能已缓存）
+  const m = window._manifest || getCachedManifest();
+  if (m && m.token && m.knowledge_source) {
+    try {
+      const platform = m.platform || 'github';
+      let url;
+      if (platform === 'gitee') {
+        url = 'https://gitee.com/api/v5/repos/' + m.knowledge_source + '/contents/index.json?access_token=' + m.token;
+      } else {
+        url = 'https://api.github.com/repos/' + m.knowledge_source + '/contents/index.json';
+      }
+      const headers = platform === 'github'
+        ? { 'Authorization': 'Bearer ' + m.token, 'Accept': 'application/vnd.github.v3+json' }
+        : {};
+      const res = await fetch(url, { headers });
+      if (res.ok) {
+        const json = await res.json();
+        const content = decodeBase64UTF8(json.content);
+        _indexData = JSON.parse(content);
+        return _indexData;
+      }
+    } catch (e) {}
+  }
   return null;
 }
 
-document.getElementById('search-form').addEventListener('submit',async function(e){
+document.getElementById('search-form').addEventListener('submit', async function(e) {
   e.preventDefault();
-  const query=document.getElementById('search-input').value.trim();
-  if(!query)return;
-  const index=await loadIndex();
-  const results=document.getElementById('search-results');
-  const scope=document.getElementById('search-scope');
-  
-  if(!index||!index.documents){
-    results.innerHTML='<div class="empty"><span class="ic">—</span><h2>无法加载知识索引</h2><p>请确认 index.json 可访问。</p></div>';
+  const query = document.getElementById('search-input').value.trim();
+  if (!query) return;
+  const index = await loadIndex();
+  const results = document.getElementById('search-results');
+  const scope = document.getElementById('search-scope');
+
+  if (!index || !index.documents) {
+    results.innerHTML = '<div class="empty"><span class="ic">—</span><h2>无法加载知识索引</h2><p>请确认 index.json 可访问。</p></div>';
     return;
   }
-  
-  const enabled=window._enabledModules||[];
-  const docs=index.documents.filter(d=>enabled.includes(d.module_id));
-  scope.textContent='检索范围: '+enabled.length+' 个模块, '+docs.length+' 个文档';
-  
+
+  const enabled = window._enabledModules || [];
+  const docs = index.documents.filter(d => enabled.includes(d.module_id));
+  scope.textContent = '检索范围: ' + enabled.length + ' 个模块, ' + docs.length + ' 个文档';
+
   // 关键词匹配
-  const scored=[];
-  for(const doc of docs){
-    let score=0;
-    const haystack=(doc.keywords||[]).join(' ')+' '+(doc.alias||[]).join(' ')+' '+(doc.title||'');
-    for(let len=Math.min(query.length,6);len>=2;len--){
-      for(let i=0;i<=query.length-len;i++){
-        const term=query.substring(i,i+len);
-        if(haystack.includes(term))score+=len;
+  const scored = [];
+  for (const doc of docs) {
+    let score = 0;
+    const haystack = (doc.keywords || []).join(' ') + ' ' + (doc.alias || []).join(' ') + ' ' + (doc.title || '');
+    for (let len = Math.min(query.length, 6); len >= 2; len--) {
+      for (let i = 0; i <= query.length - len; i++) {
+        const term = query.substring(i, i + len);
+        if (haystack.includes(term)) score += len;
       }
     }
-    if(score>0)scored.push({doc,score});
+    if (score > 0) scored.push({ doc, score });
   }
-  scored.sort((a,b)=>b.score-a.score);
-  
-  if(scored.length===0){
-    results.innerHTML='<div class="empty"><span class="ic">—</span><h2>没有命中</h2><p>换个说法试试，或确认相关模块没有被关闭。</p></div>';
+  scored.sort((a, b) => b.score - a.score);
+
+  if (scored.length === 0) {
+    results.innerHTML = '<div class="empty"><span class="ic">—</span><h2>没有命中</h2><p>换个说法试试，或确认相关模块没有被关闭。</p></div>';
     return;
   }
-  
-  results.innerHTML=scored.slice(0,10).map((item,i)=>{
-    const d=item.doc;
-    const matched=(d.keywords||[]).filter(k=>query.includes(k)||k.split('').some(c=>query.includes(c)));
+
+  results.innerHTML = scored.slice(0, 15).map(item => {
+    const d = item.doc;
+    const matched = (d.keywords || []).filter(k => query.includes(k));
     return '<div class="rec" style="flex-direction:column;align-items:flex-start;gap:var(--sp-1)">'
-      +'<div style="display:flex;justify-content:space-between;width:100%"><b>'+d.title+'</b><span class="badge badge-muted">'+item.score+'</span></div>'
-      +'<div style="display:flex;gap:var(--sp-2);flex-wrap:wrap">'
-      +'<code style="font-size:var(--fs-micro)">'+d.path+'</code>'
-      +'<span class="meta">'+d.module_id+'</span>'
-      +'</div>'
-      +(matched.length?'<div style="display:flex;gap:var(--sp-1);flex-wrap:wrap;margin-top:var(--sp-1)">'+matched.slice(0,5).map(m=>'<span style="background:var(--exception-bg);color:var(--exception-fg);padding:1px 6px;border-radius:var(--r-sm);font-size:var(--fs-micro)">'+m+'</span>').join('')+'</div>':'')
-      +'</div>';
+      + '<div style="display:flex;justify-content:space-between;width:100%"><b>' + d.title + '</b><span class="badge badge-muted">' + item.score + '</span></div>'
+      + '<div style="display:flex;gap:var(--sp-2);flex-wrap:wrap">'
+      + '<code style="font-size:var(--fs-micro)">' + d.path + '</code>'
+      + '<span class="meta">' + d.module_id + '</span>'
+      + '</div>'
+      + (matched.length ? '<div style="display:flex;gap:var(--sp-1);flex-wrap:wrap;margin-top:var(--sp-1)">' + matched.slice(0, 5).map(m => '<span style="background:var(--exception-bg);color:var(--exception-fg);padding:1px 6px;border-radius:var(--r-sm);font-size:var(--fs-micro)">' + m + '</span>').join('') + '</div>' : '')
+      + '</div>';
   }).join('');
 });
 </script>
