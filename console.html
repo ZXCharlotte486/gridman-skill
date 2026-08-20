@@ -595,94 +595,23 @@ function updateThemeBtns(choice) {
   setTimeout(() => updateThemeBtns(s || 'system'), 0);
 })();
 
-/* ===== 数据加载 ===== */
-const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+/* ===== 数据加载（仅 localhost 模式） ===== */
 let dh = null;
 
 function cacheManifest(m) { try { localStorage.setItem('gridman.manifest', JSON.stringify(m)); } catch(e){} }
 function getCachedManifest() { try { const s = localStorage.getItem('gridman.manifest'); return s ? JSON.parse(s) : null; } catch(e){ return null; } }
 
-/* ===== IndexedDB 持久化 directory handle ===== */
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open('gridman-console', 1);
-    req.onupgradeneeded = () => req.result.createObjectStore('handles');
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
-async function saveDirHandle(handle) {
-  try { const db = await openDB(); const tx = db.transaction('handles','readwrite'); tx.objectStore('handles').put(handle,'dataDir'); } catch(e){}
-}
-async function loadDirHandle() {
-  try {
-    const db = await openDB();
-    return new Promise(resolve => {
-      const tx = db.transaction('handles','readonly');
-      const req = tx.objectStore('handles').get('dataDir');
-      req.onsuccess = () => resolve(req.result || null);
-      req.onerror = () => resolve(null);
-    });
-  } catch(e){ return null; }
-}
-
 async function init() {
   const bar = document.getElementById('mode-bar');
-  if (isLocal) {
-    bar.textContent = '模式 A — localhost';
-    await loadA();
-  } else {
-    // 尝试恢复之前的 directory handle
-    const savedHandle = await loadDirHandle();
-    if (savedHandle) {
-      // 请求权限（用户只需点一次"允许"）
-      const perm = await savedHandle.requestPermission({ mode: 'readwrite' }).catch(() => 'denied');
-      if (perm === 'granted') {
-        dh = savedHandle;
-        bar.textContent = '已连接 — ' + dh.name;
-        await loadB();
-        return;
-      }
-    }
-    // 降级：用缓存的 manifest 直接连远程
-    const cached = getCachedManifest();
-    if (cached && cached.token && cached.knowledge_source) {
-      bar.innerHTML = '远程知识已连接 · <button class="btn" onclick="pickDir()">选择本地目录(可选)</button>';
-      render(cached);
-      await postInit();
-    } else {
-      bar.innerHTML = '首次使用请 <button class="btn" onclick="pickDir()">选择数据目录</button> 加载 manifest.json';
-    }
-  }
-}
-
-async function pickDir() {
-  if (!('showDirectoryPicker' in window)) { document.getElementById('mode-bar').textContent = '需要 Chrome/Edge'; return; }
-  try {
-    dh = await window.showDirectoryPicker({ mode: 'readwrite' });
-    await saveDirHandle(dh);
-    document.getElementById('mode-bar').textContent = '已连接 — ' + dh.name;
-    await loadB();
-  } catch (e) { document.getElementById('mode-bar').textContent = '取消: ' + e.message; }
-}
-
-async function loadA() {
+  bar.textContent = 'localhost:3721';
   try {
     const m = await (await fetch('/manifest.json')).json();
     cacheManifest(m);
     render(m);
     await postInit();
-  } catch (e) { document.getElementById('mode-bar').textContent = '失败: ' + e.message; }
-}
-
-async function loadB() {
-  try {
-    const f = await (await dh.getFileHandle('manifest.json')).getFile();
-    const m = JSON.parse(await f.text());
-    cacheManifest(m);
-    render(m);
-    await postInit();
-  } catch (e) {}
+  } catch (e) {
+    bar.textContent = '加载失败: ' + e.message + ' — 确认 start.bat 已运行';
+  }
 }
 
 function render(m) {
@@ -800,22 +729,10 @@ async function toggleModule(mod) {
   else { enabled.push(mod); }
   m.modules_enabled = enabled;
   window._enabledModules = enabled;
-
-  if (dh) {
-    try {
-      const handle = await dh.getFileHandle('manifest.json');
-      const writable = await handle.createWritable();
-      await writable.write(JSON.stringify(m, null, 2));
-      await writable.close();
-      render(m);
-    } catch (e) { alert('写入失败: ' + e.message); }
-    return;
-  }
-  if (isLocal) {
-    render(m);
-    document.getElementById('mode-bar').innerHTML = '<span style="color:var(--exception-fg)">⚠ 模块已在界面切换，但 localhost 模式无法写入 manifest.json。请让 Agent 执行修改。</span>';
-    return;
-  }
+  // localhost 模式无法直接写 manifest.json，提示用户
+  render(m);
+  cacheManifest(m);
+  document.getElementById('mode-bar').innerHTML = '<span style="color:var(--exception-fg)">⚠ 模块已切换（界面已更新）。如需持久化，请让 Agent 修改 manifest.json</span>';
 }
 
 /* ===== 轻量 doctor 自检 ===== */
@@ -858,23 +775,15 @@ async function loadEvidence() {
   const eviList = document.getElementById('evi-list');
   const eviCount = document.getElementById('evi-count');
   let files = [];
-  if (isLocal) {
-    try {
-      const m = window._manifest;
-      const r = await fetch('/' + (m?.evidence_dir || 'evidence') + '/');
-      if (r.ok) {
-        const html = await r.text();
-        files = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('a')]
-          .map(a => a.getAttribute('href')).filter(h => h && h.endsWith('.json') && !h.startsWith('/'));
-      }
-    } catch (e) {}
-  } else if (dh) {
-    try {
-      const m = window._manifest;
-      const sub = await dh.getDirectoryHandle(m?.evidence_dir || 'evidence');
-      for await (const [n] of sub) { if (n.endsWith('.json')) files.push(n); }
-    } catch (e) {}
-  }
+  try {
+    const m = window._manifest;
+    const r = await fetch('/' + (m?.evidence_dir || 'evidence') + '/');
+    if (r.ok) {
+      const html = await r.text();
+      files = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('a')]
+        .map(a => a.getAttribute('href')).filter(h => h && h.endsWith('.json') && !h.startsWith('/'));
+    }
+  } catch (e) {}
   if (eviCount) eviCount.textContent = files.length;
   document.getElementById('h-runs').textContent = files.length;
   if (files.length === 0) {
@@ -926,25 +835,13 @@ async function postInit() {
 /* ===== 搜索 ===== */
 let _indexData = null;
 async function loadIndex() {
-  // 优先用已从远程加载的数据（loadKnowledgeIndex 里已经拉过了）
   if (_indexData) return _indexData;
-  // 降级：尝试 localhost
+  // 从 localhost 读
   try {
-    if (isLocal) {
-      const r = await fetch('/index.json');
-      if (r.ok) { _indexData = await r.json(); return _indexData; }
-    }
+    const r = await fetch('/index.json');
+    if (r.ok) { _indexData = await r.json(); return _indexData; }
   } catch (e) {}
-  // 降级：尝试 File System API
-  if (dh) {
-    try {
-      const sub = await dh.getDirectoryHandle('knowledge');
-      const f = await (await sub.getFileHandle('index.json')).getFile();
-      _indexData = JSON.parse(await f.text());
-      return _indexData;
-    } catch (e) {}
-  }
-  // 最后尝试：直接从远程拉（manifest 可能已缓存）
+  // 降级：从远程拉
   const m = window._manifest || getCachedManifest();
   if (m && m.token && m.knowledge_source) {
     try {
