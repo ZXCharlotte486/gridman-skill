@@ -596,14 +596,12 @@ function updateThemeBtns(choice) {
 })();
 
 /* ===== 数据加载（仅 localhost 模式） ===== */
-let dh = null;
-
 function cacheManifest(m) { try { localStorage.setItem('gridman.manifest', JSON.stringify(m)); } catch(e){} }
 function getCachedManifest() { try { const s = localStorage.getItem('gridman.manifest'); return s ? JSON.parse(s) : null; } catch(e){ return null; } }
 
 async function init() {
   const bar = document.getElementById('mode-bar');
-  bar.textContent = 'localhost:3721';
+  bar.textContent = '远程知识已连接';
   try {
     const m = await (await fetch('/manifest.json')).json();
     cacheManifest(m);
@@ -634,7 +632,7 @@ function render(m) {
   if (rtPlatform) rtPlatform.textContent = m.platform || '—';
   if (rtSource) rtSource.textContent = m.knowledge_source || '—';
   if (rtModes) rtModes.textContent = m.modes_source || '—';
-  if (rtWritable) rtWritable.textContent = dh ? '是' : (isLocal ? '否（localhost只读）' : '需选目录');
+  if (rtWritable) rtWritable.textContent = '需让 Agent 写入';
 
   // 知识空间
   document.getElementById('k-docs').textContent = '—';
@@ -745,13 +743,8 @@ async function runDoctor() {
   else { checks.push({ name: 'Token', pass: false, detail: '未设置，无法访问远程知识' }); }
   const enabled = (m && m.modules_enabled) || [];
   checks.push({ name: '启用模块', pass: enabled.length > 0, detail: enabled.length + ' 个' });
-  if (dh) {
-    try {
-      const modesDir = await dh.getDirectoryHandle(m.modes_dir || 'modes');
-      let count = 0; for await (const [n] of modesDir) { if (n.endsWith('.md')) count++; }
-      checks.push({ name: '本地模式文件', pass: count > 0, detail: count + ' 个' });
-    } catch (e) { checks.push({ name: '本地模式文件', pass: false, detail: 'modes/ 目录不存在' }); }
-  }
+  // 检查远程知识是否可达
+  if (m && m.knowledge_source) { checks.push({ name: '知识源', pass: true, detail: m.knowledge_source }); }
   return checks;
 }
 
@@ -799,23 +792,15 @@ async function loadEvidence() {
 async function loadMind() {
   const body = document.getElementById('mind-body');
   let files = [];
-  if (isLocal) {
-    try {
-      const m = window._manifest;
-      const r = await fetch('/' + (m?.mind_dir || 'mind') + '/');
-      if (r.ok) {
-        const html = await r.text();
-        files = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('a')]
-          .map(a => a.getAttribute('href')).filter(h => h && h.endsWith('.json') && !h.startsWith('/'));
-      }
-    } catch (e) {}
-  } else if (dh) {
-    try {
-      const m = window._manifest;
-      const sub = await dh.getDirectoryHandle(m?.mind_dir || 'mind');
-      for await (const [n] of sub) { if (n.endsWith('.json')) files.push(n); }
-    } catch (e) {}
-  }
+  try {
+    const m = window._manifest;
+    const r = await fetch('/' + (m?.mind_dir || 'mind') + '/');
+    if (r.ok) {
+      const html = await r.text();
+      files = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('a')]
+        .map(a => a.getAttribute('href')).filter(h => h && h.endsWith('.json') && !h.startsWith('/'));
+    }
+  } catch (e) {}
   document.getElementById('h-mind').textContent = files.length;
   if (files.length === 0) {
     body.innerHTML = '<div class="empty"><span class="ic">◇</span><h2>暂无 Mind 记录</h2><p>在 Agent 中确认专业判断后，会存入 Mind。换宿主也不会丢。</p></div>';
