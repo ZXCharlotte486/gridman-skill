@@ -27,6 +27,29 @@ const MIME = {
 const server = http.createServer((req, res) => {
   // CORS 允许（本地用）
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // OPTIONS 预检
+  if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
+
+  // POST /manifest.json — 写入
+  if (req.method === 'POST' && req.url === '/manifest.json') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        JSON.parse(body); // 验证是合法 JSON
+        fs.writeFileSync(path.join(ROOT, 'manifest.json'), body, 'utf-8');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end('{"ok":true}');
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end('{"error":"' + e.message + '"}');
+      }
+    });
+    return;
+  }
 
   let urlPath = decodeURIComponent(req.url.split('?')[0]);
   if (urlPath === '/') urlPath = '/console.html';

@@ -728,10 +728,16 @@ async function toggleModule(mod) {
   else { enabled.push(mod); }
   m.modules_enabled = enabled;
   window._enabledModules = enabled;
-  // localhost 模式无法直接写 manifest.json，提示用户
   render(m);
   cacheManifest(m);
-  document.getElementById('mode-bar').innerHTML = '<span style="color:var(--exception-fg)">⚠ 模块已切换（界面已更新）。如需持久化，请让 Agent 修改 manifest.json</span>';
+  // 持久化写入
+  try {
+    const res = await fetch('/manifest.json', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(m, null, 2) });
+    if (res.ok) { document.getElementById('mode-bar').textContent = '远程知识已连接 · 模块已保存'; }
+    else { document.getElementById('mode-bar').innerHTML = '<span style="color:var(--exception-fg)">⚠ 写入失败</span>'; }
+  } catch (e) {
+    document.getElementById('mode-bar').innerHTML = '<span style="color:var(--exception-fg)">⚠ 写入失败: ' + e.message + '</span>';
+  }
 }
 
 /* ===== 轻量 doctor 自检 ===== */
