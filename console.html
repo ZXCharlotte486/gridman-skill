@@ -64,8 +64,8 @@ main{height:100vh;overflow:hidden;padding:var(--sp-6) var(--sp-8);display:flex;f
 .page-head p{color:var(--text-secondary);font-size:var(--fs-small);margin-top:var(--sp-05)}
 
 /* 页面内容区 */
-.page{position:absolute;inset:0;display:flex;flex-direction:column;min-height:0;opacity:0;visibility:hidden;transition:opacity var(--dur-page) var(--ease-out)}
-.page.active{position:relative;opacity:1;visibility:visible}
+.page{display:none;flex:1;flex-direction:column;min-height:0}
+.page.active{display:flex}
 
 /* 滚动容器 — 仅在面板内部滚动 */
 .scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--sp-4);min-height:0;
@@ -338,11 +338,41 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       </div>
       <!-- 接入指南 -->
       <div id="htab-guide" style="display:none">
-        <div class="card"><h2>接入指南</h2><p style="font-size:var(--fs-small);color:var(--text-secondary);line-height:1.7">1. 在宿主（Kiro / Cursor / DSH）中安装 Gridman Skill<br>2. 确保 manifest.json 中 Token 和 knowledge_source 已配置<br>3. Agent 启动后自动加载知识索引<br>4. 首次使用打开 Console 选择数据目录以缓存配置<br><br>Skill 公开仓库: github.com/ZXCharlotte486/gridman-skill</p></div>
+        <div class="card"><h2>接入指南</h2>
+        <div style="font-size:var(--fs-small);color:var(--text-secondary);line-height:1.8">
+          <p><b>第一步：安装</b></p>
+          <p>1. 确保已安装 Node.js（v16+）</p>
+          <p>2. Clone 仓库：<code>git clone https://github.com/ZXCharlotte486/gridman-skill.git</code></p>
+          <p>3. 运行安装脚本：<code>cd gridman-skill && node bin/init.js</code></p>
+          <p>4. 按提示填写根目录路径和 Git Token</p>
+          <br>
+          <p><b>第二步：配置宿主</b></p>
+          <p>• Kiro：将 SKILL.md 放入 <code>.kiro/skills/gridman/</code></p>
+          <p>• Cursor：在 Rules 中引用 SKILL.md 内容</p>
+          <p>• DSH：按 DSH 插件格式适配（开发中）</p>
+          <br>
+          <p><b>第三步：验证</b></p>
+          <p>• 向 Agent 提问"你是古立特吗"——应回复确认身份</p>
+          <p>• 提问一个财税问题——应路由到知识库检索</p>
+          <p>• 双击 <code>start.vbs</code> 打开 Console 确认状态</p>
+        </div></div>
       </div>
       <!-- 使用手册 -->
       <div id="htab-manual" style="display:none">
-        <div class="card"><h2>使用手册</h2><p style="font-size:var(--fs-small);color:var(--text-secondary);line-height:1.7">• 知识空间 — 管理模块开关，查看知识文件清单<br>• 知识检索 — 客户端关键词检索，命中结果可预览正文<br>• Mind — 跨宿主专业资产（偏好/判断/证据索引）<br>• Evidence — 确定性运行的输入身份、参数、验收与哈希<br>• 设置 — 框架配置、主题、边界声明</p></div>
+        <div class="card"><h2>使用手册</h2>
+        <div style="font-size:var(--fs-small);color:var(--text-secondary);line-height:1.8">
+          <p><b>知识空间</b> — 管理模块开关。关闭的模块不参与检索，古立特读不到。</p>
+          <p><b>知识检索</b> — 客户端关键词检索，命中结果可预览正文，命中词高亮。</p>
+          <p><b>Mind</b> — 跨宿主专业资产。偏好、判断、证据索引。换宿主不会丢。</p>
+          <p><b>Evidence</b> — 确定性运行的证据包。输入身份、参数、验收状态、SHA-256 哈希。</p>
+          <p><b>设置</b> — 框架配置、主题切换、边界声明。</p>
+          <br>
+          <p><b>Console 不做什么</b></p>
+          <p>• 不发起任务（任务在宿主里发起）</p>
+          <p>• 不上传业务文件</p>
+          <p>• 不修改知识内容（知识由版本发布）</p>
+          <p>• 不执行计算（确定性执行由 Agent + Rescue Pack 完成）</p>
+        </div></div>
       </div>
     </div>
   </div>
