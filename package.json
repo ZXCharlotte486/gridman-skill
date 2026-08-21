@@ -1,27 +1,25 @@
-{
-  "name": "gridman-skill",
-  "version": "0.2.1",
-  "description": "财税超级特工古立特 — 以插件形态寄生在任意 AI 宿主，提供专业知识、确定性执行和可验证结果",
-  "author": "真寻Charlotte",
-  "license": "MIT",
-  "bin": {
-    "gridman": "./bin/init.js"
-  },
-  "files": [
-    "SKILL.md",
-    "api.ts",
-    "console.html",
-    "gridman-character/",
-    "bin/"
-  ],
-  "keywords": [
-    "gridman",
-    "finance",
-    "accounting",
-    "audit",
-    "tax",
-    "agent",
-    "skill",
-    "cpa"
-  ]
+﻿{
+    "name":  "gridman-skill",
+    "version":  "0.2.1",
+    "description":  "财税超级特工古立特 — 以插件形态寄生在任意 AI 宿主，提供专业知识、确定性执行和可验证结果",
+    "author":  "真寻Charlotte",
+    "license":  "MIT",
+    "bin":  {
+                "gridman":  "./bin/init.js"
+            },
+    "files":  [
+                  "SKILL.md",
+                  "console.html",
+                  "bin/"
+              ],
+    "keywords":  [
+                     "gridman",
+                     "finance",
+                     "accounting",
+                     "audit",
+                     "tax",
+                     "agent",
+                     "skill",
+                     "cpa"
+                 ]
 }
