@@ -751,12 +751,16 @@ async function loadKnowledgeIndex(m) {
 function parseIndexMd(content) {
   const lines = content.split('\n').filter(l => l.startsWith('|') && !l.startsWith('| 文件') && !l.startsWith('|--'));
   return lines.map(line => {
-    const cols = line.split('|').map(c => c.trim()).filter(c => c);
-    if (cols.length < 4) return null;
-    const path = cols[0];       // accounts-receivable-aging.md
-    const module_id = cols[1];  // audit
-    const title = cols[2];      // 应收账款账龄与明细
-    const keywords = cols[3] ? cols[3].split(',').map(k => k.trim()).filter(k => k) : [];
+    // 按 | 分割，保留空列（不 filter 空字符串）
+    const raw = line.split('|');
+    // raw[0] 是开头 | 前的空字符串，raw[1]起是实际列
+    if (raw.length < 5) return null; // 需要至少 |col1|col2|col3|col4|
+    const path = raw[1].trim();
+    const module_id = raw[2].trim();
+    const title = raw[3].trim();
+    const kwRaw = raw[4] ? raw[4].trim() : '';
+    const keywords = kwRaw ? kwRaw.split(',').map(k => k.trim()).filter(k => k) : [];
+    if (!path || !path.endsWith('.md')) return null;
     return { path, module_id, title, keywords };
   }).filter(Boolean);
 }
@@ -995,7 +999,7 @@ document.getElementById('search-form').addEventListener('submit', async function
   const routeCards = document.getElementById('route-cards');
 
   if (!index || !index.documents) {
-    resultList.innerHTML = '<div class="empty"><span class="ic">—</span><h2>无法加载知识索引</h2><p>请确认 index.json 可访问。</p></div>';
+    resultList.innerHTML = '<div class="empty"><span class="ic">—</span><h2>无法加载知识索引</h2><p>请确认 INDEX.md 可访问。</p></div>';
     return;
   }
 
