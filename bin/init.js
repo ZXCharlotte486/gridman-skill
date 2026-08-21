@@ -115,9 +115,7 @@ async function main() {
   console.log('  ✓ manifest.json');
 
   // 6. 模式文件不拉到本地（Agent 按需从远程读取）
-  console.log('\n  模式文件由 Agent 按需从远程加载，不拉到本地。');
-  // 创建空 modes 目录（保留结构，但不填充内容）
-  fs.mkdirSync(path.join(root, 'modes'), { recursive: true });
+  console.log('\n  模式和知识由 Agent 按需从远程加载。');
 
   // 7. 拷贝 console.html + serve.js + start.vbs
   const consoleSrc = path.join(__dirname, '..', 'console.html');
@@ -139,6 +137,16 @@ async function main() {
   fs.writeFileSync(path.join(root, 'start.vbs'), startVbs, 'utf-8');
   console.log('  ✓ start.vbs');
 
+  // 8. 生成 SKILL.md（替换 manifest 路径占位符）
+  const skillSrc = path.join(__dirname, '..', 'SKILL.md');
+  if (fs.existsSync(skillSrc)) {
+    const manifestPath = path.join(root, 'manifest.json');
+    let skillContent = fs.readFileSync(skillSrc, 'utf-8');
+    skillContent = skillContent.replace('{{MANIFEST_PATH}}', manifestPath);
+    fs.writeFileSync(path.join(root, 'SKILL.md'), skillContent, 'utf-8');
+    console.log('  ✓ SKILL.md（已写入 manifest 路径）');
+  }
+
   console.log('\n  ══════════════════════════════════════');
   console.log('  安装完成！');
   console.log(`  根目录: ${root}`);
@@ -147,7 +155,7 @@ async function main() {
   console.log('');
   console.log('  下一步:');
   console.log('  • 双击 start.vbs 打开 Console');
-  console.log('  • 在宿主（Kiro/Cursor/DSH）中加载 Gridman Skill');
+  console.log(`  • 把 ${path.join(root, 'SKILL.md')} 加载到你的 AI 宿主`);
   console.log('  • 向古立特提一个财税问题试试');
   console.log('  ══════════════════════════════════════\n');
 

@@ -9,6 +9,7 @@ description: "财税超级特工古立特。寄生在任意AI宿主，提供专�
 
 | 约束 | 规则 |
 |---|---|
+| manifest | {{MANIFEST_PATH}} |
 | 知识源 | 远程 Git 私有仓库，通过 manifest.json 的 token 访问 |
 | 模式源 | 远程 Git 私有仓库，同上 |
 | 用户资产 | 本地 mind/ 和 evidence/，不主动上传 |
