@@ -114,39 +114,10 @@ async function main() {
   fs.writeFileSync(path.join(root, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf-8');
   console.log('  ✓ manifest.json');
 
-  // 6. 拉取远程模式文件
-  if (token.trim()) {
-    console.log('\n  拉取系统模式...');
-    try {
-      // 先拉 index.json
-      const indexRes = await fetchFile(platform, DEFAULT_MODES, 'index.json', token.trim());
-      const indexContent = decodeBase64(indexRes.content);
-      fs.writeFileSync(path.join(root, 'modes', 'index.json'), indexContent, 'utf-8');
-      console.log('  ✓ modes/index.json');
-
-      const index = JSON.parse(indexContent);
-      const modes = index.modes || [];
-
-      for (const mode of modes) {
-        try {
-          const fileRes = await fetchFile(platform, DEFAULT_MODES, mode.path, token.trim());
-          const content = decodeBase64(fileRes.content);
-          const localPath = path.join(root, 'modes', mode.path);
-          // 确保子目录存在（sys/ biz/）
-          fs.mkdirSync(path.dirname(localPath), { recursive: true });
-          fs.writeFileSync(localPath, content, 'utf-8');
-          console.log(`  ✓ modes/${mode.path}`);
-        } catch (e) {
-          console.log(`  ✗ modes/${mode.path} — ${e.message}`);
-        }
-      }
-    } catch (e) {
-      console.log(`  ✗ 拉取失败: ${e.message}`);
-      console.log('  模式文件将在首次使用时由 Agent 按需拉取。');
-    }
-  } else {
-    console.log('\n  跳过模式拉取（无 Token）。');
-  }
+  // 6. 模式文件不拉到本地（Agent 按需从远程读取）
+  console.log('\n  模式文件由 Agent 按需从远程加载，不拉到本地。');
+  // 创建空 modes 目录（保留结构，但不填充内容）
+  fs.mkdirSync(path.join(root, 'modes'), { recursive: true });
 
   // 7. 拷贝 console.html + serve.js + start.vbs
   const consoleSrc = path.join(__dirname, '..', 'console.html');
