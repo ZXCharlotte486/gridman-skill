@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gridman Console</title>
+<script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"></script>
 <style>
 /* ===== 1. 设计令牌 ===== */
 :root {
@@ -201,7 +202,22 @@ nav button.active::before{content:"";position:absolute;left:0;top:var(--sp-2);bo
 .doc-head>div{min-width:0}
 .doc-head b{display:block;color:var(--text);font-size:var(--fs-small);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .doc-head small{display:block;margin-top:var(--sp-05);color:var(--text-muted);font-family:var(--font-mono);font-size:var(--fs-micro)}
-.doc-body{min-height:0;flex:1;padding:var(--sp-5);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent;font-size:var(--fs-small);line-height:1.7;color:var(--text-body)}
+.doc-body{min-height:0;flex:1;padding:var(--sp-5);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent;font-size:var(--fs-small);line-height:1.7;color:var(--text-body);word-break:break-word}
+.doc-body h1{font-size:var(--fs-h3);font-weight:700;color:var(--text);margin:var(--sp-5) 0 var(--sp-3)}
+.doc-body h2{font-size:var(--fs-lead);font-weight:700;color:var(--text);margin:var(--sp-5) 0 var(--sp-3);padding-bottom:var(--sp-2);border-bottom:1px solid var(--border)}
+.doc-body h3{font-size:var(--fs-body);font-weight:600;color:var(--text);margin:var(--sp-4) 0 var(--sp-2)}
+.doc-body p{margin-bottom:var(--sp-3)}
+.doc-body ul,.doc-body ol{margin:var(--sp-2) 0 var(--sp-3) var(--sp-5)}
+.doc-body li{margin-bottom:var(--sp-1)}
+.doc-body blockquote{border-left:3px solid var(--border-strong);padding:var(--sp-2) var(--sp-4);margin:var(--sp-3) 0;color:var(--text-secondary);background:var(--bg-subtle);border-radius:0 var(--r-sm) var(--r-sm) 0}
+.doc-body table{width:100%;border-collapse:collapse;margin:var(--sp-3) 0;font-size:var(--fs-tiny)}
+.doc-body th,.doc-body td{border:1px solid var(--border);padding:var(--sp-2) var(--sp-3);text-align:left}
+.doc-body th{background:var(--bg-subtle);font-weight:600}
+.doc-body code{background:var(--bg-subtle);padding:1px 4px;border-radius:var(--r-sm);font-size:var(--fs-tiny);font-family:var(--font-mono)}
+.doc-body pre{background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-4);margin:var(--sp-3) 0;overflow-x:auto}
+.doc-body pre code{background:none;padding:0}
+.doc-body hr{border:none;border-top:1px solid var(--border);margin:var(--sp-5) 0}
+.doc-body strong{font-weight:600;color:var(--text)}
 .doc-body::-webkit-scrollbar{width:6px}
 .doc-body::-webkit-scrollbar-thumb{border-radius:var(--r-pill);background:var(--border-strong)}
 .doc-body mark{background:var(--exception-bg);color:var(--exception-fg);padding:1px 3px;border-radius:var(--r-sm)}
@@ -1121,22 +1137,15 @@ async function loadDocContent(path, query, terms) {
     const json = await res.json();
     let content = decodeBase64UTF8(json.content);
 
-    // 高亮命中词
+    // Markdown → HTML（使用 marked.js）
+    let html = window.marked ? marked.parse(content) : content.replace(/\n/g, '<br>');
+
+    // 高亮命中词（在渲染后的 HTML 文本节点中高亮）
     for (const t of terms) {
-      content = content.replace(new RegExp('(' + t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>');
+      html = html.replace(new RegExp('(' + t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>');
     }
 
-    // 简单 Markdown → HTML（标题、粗体、代码块、列表）
-    content = content
-      .replace(/^### (.+)$/gm, '<h3 style="margin:var(--sp-4) 0 var(--sp-2);color:var(--text);font-size:var(--fs-body)">$1</h3>')
-      .replace(/^## (.+)$/gm, '<h2 style="margin:var(--sp-5) 0 var(--sp-3);color:var(--text);font-size:var(--fs-lead)">$1</h2>')
-      .replace(/^# (.+)$/gm, '<h1 style="margin:var(--sp-5) 0 var(--sp-3);color:var(--text);font-size:var(--fs-h3)">$1</h1>')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/`([^`]+)`/g, '<code style="background:var(--bg-subtle);padding:1px 4px;border-radius:var(--r-sm);font-size:var(--fs-tiny)">$1</code>')
-      .replace(/^- (.+)$/gm, '<li style="margin-left:var(--sp-4);margin-bottom:var(--sp-1)">$1</li>')
-      .replace(/\n/g, '<br>');
-
-    docBody.innerHTML = content;
+    docBody.innerHTML = html;
   } catch (e) {
     docBody.innerHTML = '<div class="empty"><span class="ic">—</span><h2>加载失败</h2><p>' + e.message + '</p></div>';
   }
