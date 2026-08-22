@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 /**
  * Gridman Console 轻量 HTTP 服务器
- * 用法: node serve.js [root_directory]
+ * 用法: node serve.js [user_data_directory]
  * 默认端口 3721，默认目录为当前目录
+ *
+ * 路由逻辑：
+ *   console.html → 从 gridman-skill/ 读（git 管 UI）
+ *   manifest.json / mind/ / evidence/ → 从 user-data/ 读写（用户数据）
  */
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
 const PORT = 3721;
-const ROOT = path.resolve(process.argv[2] || '.').replace(/[\\/]+$/, '');
+const USER_DATA = path.resolve(process.argv[2] || '.').replace(/[\\/]+$/, '');
+const SKILL_DIR = path.resolve(__dirname, '..');
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -24,6 +29,16 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8'
 };
 
+// 判断请求应该从哪个目录读
+function resolveFilePath(urlPath) {
+  // console.html 始终从 skill 仓库读
+  if (urlPath === '/console.html' || urlPath === '/') {
+    return path.join(SKILL_DIR, 'console.html');
+  }
+  // 其余文件从 user-data 读（manifest.json, mind/, evidence/ 等）
+  return path.join(USER_DATA, urlPath);
+}
+
 const server = http.createServer((req, res) => {
   // CORS 允许（本地用）
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -33,14 +48,14 @@ const server = http.createServer((req, res) => {
   // OPTIONS 预检
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
-  // POST /manifest.json — 写入
+  // POST /manifest.json — 写入 user-data
   if (req.method === 'POST' && req.url === '/manifest.json') {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
       try {
         JSON.parse(body); // 验证是合法 JSON
-        fs.writeFileSync(path.join(ROOT, 'manifest.json'), body, 'utf-8');
+        fs.writeFileSync(path.join(USER_DATA, 'manifest.json'), body, 'utf-8');
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end('{"ok":true}');
       } catch (e) {
@@ -54,10 +69,10 @@ const server = http.createServer((req, res) => {
   let urlPath = decodeURIComponent(req.url.split('?')[0]);
   if (urlPath === '/') urlPath = '/console.html';
 
-  const filePath = path.join(ROOT, urlPath);
+  const filePath = resolveFilePath(urlPath);
 
-  // 安全检查：不允许跳出根目录
-  if (!filePath.startsWith(ROOT)) {
+  // 安全检查：不允许跳出合法目录
+  if (!filePath.startsWith(USER_DATA) && !filePath.startsWith(SKILL_DIR)) {
     res.writeHead(403);
     res.end('Forbidden');
     return;
@@ -100,12 +115,12 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => {
   console.log(`  Gridman Console Server`);
   console.log(`  http://localhost:${PORT}`);
-  console.log(`  Root: ${ROOT}`);
-  console.log(`  console.html exists: ${fs.existsSync(path.join(ROOT, 'console.html'))}`);
+  console.log(`  UI:   ${SKILL_DIR}/console.html`);
+  console.log(`  Data: ${USER_DATA}`);
   console.log(`  Press Ctrl+C to stop.`);
 });
 
-// 无活动自动退出（60秒无请求）
+// 无活动自动退出（3分钟无请求）
 let lastActivity = Date.now();
 const IDLE_TIMEOUT = 3 * 60 * 1000;
 server.on('request', () => { lastActivity = Date.now(); });
