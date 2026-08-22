@@ -73,7 +73,7 @@ function decodeBase64(content) {
 
 async function main() {
   console.log('\n  ╔══════════════════════════════════════╗');
-  console.log('  ║   Gridman Skill 安装向导 v0.2.0     ║');
+  console.log('  ║   Gridman Skill 安装向导 v0.2.1     ║');
   console.log('  ║   超级特工古立特 · Access Flash      ║');
   console.log('  ╚══════════════════════════════════════╝\n');
 
@@ -100,7 +100,7 @@ async function main() {
 
   // 5. 生成 manifest.json
   const manifest = {
-    manifest_version: '0.2.0',
+    manifest_version: '0.2.1',
     root: root,
     platform: platform,
     knowledge_source: DEFAULT_KNOWLEDGE,

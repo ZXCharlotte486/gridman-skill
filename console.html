@@ -294,7 +294,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 <body>
 <div class="app">
 <aside>
-  <div class="brand"><b>G</b><div><strong>Gridman</strong><small>Console 0.2.0</small></div></div>
+  <div class="brand"><b>G</b><div><strong>Gridman</strong><small>Console 0.2.1</small></div></div>
   <nav id="nav">
     <button data-page="home" class="active"><i>⌂</i>首页</button>
     <button data-page="knowledge"><i>▣</i>知识空间</button>
@@ -413,7 +413,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <div class="know-side">
       <div class="side-box"><div class="big" id="k-docs">—</div><div class="lbl">可检索文件</div></div>
       <div class="side-box"><div class="big" id="k-mods">—</div><div class="lbl">启用 / 总模块</div><div class="bar"><i id="k-bar" style="width:0%"></i></div></div>
-      <div class="side-box"><div class="big" id="k-ver">0.2.0</div><div class="lbl">知识版本</div></div>
+      <div class="side-box"><div class="big" id="k-ver">0.2.1</div><div class="lbl">知识版本</div></div>
       <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
         <h2>知识文件</h2>
         <div id="file-list" style="flex:1;overflow-y:auto;min-height:0;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent"></div>
@@ -543,7 +543,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
       <div id="set-about" class="set-panel" style="display:none">
         <div class="card" style="margin-bottom:var(--sp-4)">
-          <h2>Gridman Console 0.2.0</h2>
+          <h2>Gridman Console 0.2.1</h2>
           <p style="font-size:var(--fs-small);color:var(--text-secondary);margin-bottom:var(--sp-4)">本地运行的管理面板。它是可替换的——删除 Console 不会删除你的 Mind 和 Evidence。</p>
         </div>
         <div class="note" style="margin-bottom:var(--sp-3)"><strong>专业边界</strong><p>本工具提供专业知识指引与工作辅助，不构成正式审计意见、税务建议或法律意见。税率、文号、优惠期限以官方最新发布为准。</p></div>
@@ -554,7 +554,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <div class="know-side">
       <div class="card">
         <h2 style="margin-bottom:var(--sp-3)">运行时</h2>
-        <div style="margin-bottom:var(--sp-4)"><b style="font-size:var(--fs-lead);color:var(--text)">Gridman Console</b><br><small style="color:var(--text-muted)">版本 0.2.0</small></div>
+        <div style="margin-bottom:var(--sp-4)"><b style="font-size:var(--fs-lead);color:var(--text)">Gridman Console</b><br><small style="color:var(--text-muted)">版本 0.2.1</small></div>
         <div class="set-row"><span class="k">平台</span><span class="v" id="rt-platform">—</span></div>
         <div class="set-row"><span class="k">知识源</span><span class="v" id="rt-source">—</span></div>
         <div class="set-row"><span class="k">模式源</span><span class="v" id="rt-modes">—</span></div>
@@ -684,7 +684,7 @@ function render(m) {
   // 知识空间
   document.getElementById('k-docs').textContent = '—';
   document.getElementById('k-mods').textContent = enabled.length + ' / ' + all.length;
-  document.getElementById('k-ver').textContent = m.manifest_version || '0.2.0';
+  document.getElementById('k-ver').textContent = m.manifest_version || '0.2.1';
   document.getElementById('k-bar').style.width = Math.round(enabled.length / all.length * 100) + '%';
 
   loadKnowledgeIndex(m);
@@ -692,7 +692,7 @@ function render(m) {
   // 设置
   document.getElementById('cfg-list').innerHTML = [
     ['根目录', m.root || '—'], ['知识源', m.knowledge_source || '—'], ['模式源', m.modes_source || '—'],
-    ['平台', m.platform || '—'], ['Token', m.token ? '••••••••' : '未设置'], ['版本', m.manifest_version || '0.2.0']
+    ['平台', m.platform || '—'], ['Token', m.token ? '••••••••' : '未设置'], ['版本', m.manifest_version || '0.2.1']
   ].map(([k, v]) => '<div class="set-row"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>').join('');
 }
 
@@ -1060,7 +1060,7 @@ document.getElementById('search-form').addEventListener('submit', async function
   planTerms.innerHTML = terms.slice(0, 8).map(t => '<b>' + t + '</b>').join('');
   const allMods = ['accounting','audit','tax','investment','compliance','analysis','specialized','academic','sources'];
   const closedMods = allMods.filter(x => !enabled.includes(x));
-  let scopeHtml = '<em>检索 ' + enabled.length + ' 个模块</em><em>命中 ' + scored.length + ' 条</em><em>知识版本 ' + (window._manifest?.manifest_version || '0.2.0') + '</em>';
+  let scopeHtml = '<em>检索 ' + enabled.length + ' 个模块</em><em>命中 ' + scored.length + ' 条</em><em>知识版本 ' + (window._manifest?.manifest_version || '0.2.1') + '</em>';
   if (closedMods.length > 0) {
     scopeHtml += '<div style="margin-top:var(--sp-2);padding:var(--sp-2) var(--sp-3);border:1px solid var(--exception-border);border-radius:var(--r-md);background:var(--exception-bg);color:var(--exception-fg);font-size:var(--fs-micro);line-height:1.5">⚠ ' + closedMods.length + ' 个模块已关闭，未参与检索：' + closedMods.join('、') + '</div>';
   }
